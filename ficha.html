@@ -155,25 +155,39 @@
 
                 <div class="attr-column">
 
-                    <h2 class="column-title">ATRIBUTOS</h2>
+                    <div class="column-title-row">
+                        <h2 class="column-title">ATRIBUTOS</h2>
+                        <button type="button" class="section-toggle" data-section-toggle="atributos" aria-label="Minimizar Atributos">▾</button>
+                    </div>
 
-                    <p class="sheet-block-hint">
-                        Podem ficar negativos. Clique no valor para rolar 1d10 + o valor dele.
-                    </p>
+                    <div data-section="atributos">
 
-                    <div class="attributes-row" id="attributes-grid"></div>
+                        <p class="sheet-block-hint">
+                            Podem ficar negativos. Clique no valor para rolar 1d10 + o valor dele.
+                        </p>
+
+                        <div class="attributes-row" id="attributes-grid"></div>
+
+                    </div>
 
                 </div>
 
                 <div class="skills-column">
 
-                    <h2 class="column-title">PERÍCIAS</h2>
+                    <div class="column-title-row">
+                        <h2 class="column-title">PERÍCIAS</h2>
+                        <button type="button" class="section-toggle" data-section-toggle="pericias" aria-label="Minimizar Perícias">▾</button>
+                    </div>
 
-                    <p class="sheet-block-hint">
-                        Atributo + treinamento + outros bônus. Clique na perícia para rolar 1d10 + o total.
-                    </p>
+                    <div data-section="pericias">
 
-                    <div class="skills-list" id="skills-list"></div>
+                        <p class="sheet-block-hint">
+                            Atributo + treinamento + outros bônus. Clique na perícia para rolar 1d10 + o total. Clique no nome do atributo para trocá-lo.
+                        </p>
+
+                        <div class="skills-list" id="skills-list"></div>
+
+                    </div>
 
                 </div>
 
@@ -193,7 +207,7 @@
             <h2>Rolagem de Dados</h2>
 
             <p class="sheet-block-hint">
-                Use os botões rápidos ou escreva sua própria rolagem. Ex: <code>1d10</code> (rola de 1 a 10), <code>1d12 + 5</code> (rola e soma 5), <code>3d8d2</code> (rola 3d8 e descarta os 2 piores resultados).
+                Use os botões rápidos ou escreva sua própria rolagem, somando quantos termos quiser. Ex: <code>1d10</code>, <code>1d12 + 5</code>, <code>3d8d2</code> (descarta os 2 piores), ou <code>1d8 + 1d10 + 2d4d1 + 5 - 2</code>.
             </p>
 
             <div class="dice-quick-buttons">
@@ -222,66 +236,73 @@
                 VITALIDADE
             </p>
 
-            <h2>Recursos</h2>
+            <div class="column-title-row">
+                <h2>Recursos</h2>
+                <button type="button" class="section-toggle" data-section-toggle="recursos" aria-label="Minimizar Recursos">▾</button>
+            </div>
 
-            <p class="sheet-block-hint">
-                PV, PP e Sanidade são calculados pela Classe e pelo NEX. Você pode ajustar os valores atuais/máximos a qualquer momento — eles recalculam quando a Classe, o NEX ou os atributos relacionados mudarem.
-            </p>
+            <div data-section="recursos">
 
-            <div class="resource-bars" id="resource-bars"></div>
+                <p class="sheet-block-hint">
+                    PV, PP e Sanidade são calculados pela Classe e pelo NEX. Você pode ajustar os valores atuais/máximos a qualquer momento — eles recalculam quando a Classe, o NEX ou os atributos relacionados mudarem.
+                </p>
 
-            <div class="derived-grid defense-grid">
+                <div class="resource-bars" id="resource-bars"></div>
 
-                <div class="derived-stat defense-stat">
-                    <span class="derived-label">Defesa</span>
-                    <span class="derived-value" id="defesa-value">5</span>
-                    <span class="derived-formula">5 + Destreza + bônus</span>
+                <div class="derived-grid defense-grid">
 
-                    <div class="defense-bonus-field">
-                        <label for="defesa-bonus">Outros bônus</label>
-                        <input type="number" id="defesa-bonus" value="0">
+                    <div class="derived-stat defense-stat">
+                        <span class="derived-label">Defesa</span>
+                        <span class="derived-value" id="defesa-value">5</span>
+                        <span class="derived-formula">5 + Destreza + bônus</span>
+
+                        <div class="defense-bonus-field">
+                            <label for="defesa-bonus">Outros bônus</label>
+                            <input type="number" id="defesa-bonus" value="0">
+                        </div>
+
+                        <div class="sub-stats-row">
+                            <label>Esquiva
+                                <input type="number" id="esquiva-input">
+                            </label>
+                            <label>Bloqueio
+                                <input type="number" id="bloqueio-input">
+                            </label>
+                        </div>
                     </div>
 
-                    <div class="sub-stats-row">
-                        <label>Esquiva
-                            <input type="number" id="esquiva-input">
-                        </label>
-                        <label>Bloqueio
-                            <input type="number" id="bloqueio-input">
-                        </label>
+                    <div class="derived-stat pplimit-stat">
+                        <span class="derived-label">Limite de PP</span>
+                        <span class="derived-value" id="pplimit-value">0</span>
+                        <span class="derived-formula">NEX ÷ 5 + ajuste</span>
+
+                        <div class="pplimit-adjust">
+                            <button type="button" class="attr-btn" id="pplimit-minus" aria-label="Diminuir limite de PP">–</button>
+                            <span id="pplimit-bonus-display">0</span>
+                            <button type="button" class="attr-btn" id="pplimit-plus" aria-label="Aumentar limite de PP">+</button>
+                        </div>
+
+                        <div class="sub-stats-row deslocamento-row">
+                            <label>Deslocamento (m)
+                                <input type="number" id="desloc-metros">
+                            </label>
+                            <span class="deslocamento-ou">ou</span>
+                            <label>Quadrados
+                                <input type="number" id="desloc-quadrados">
+                            </label>
+                        </div>
                     </div>
-                </div>
 
-                <div class="derived-stat pplimit-stat">
-                    <span class="derived-label">Limite de PP</span>
-                    <span class="derived-value" id="pplimit-value">0</span>
-                    <span class="derived-formula">NEX ÷ 5 + ajuste</span>
-
-                    <div class="pplimit-adjust">
-                        <button type="button" class="attr-btn" id="pplimit-minus" aria-label="Diminuir limite de PP">–</button>
-                        <span id="pplimit-bonus-display">0</span>
-                        <button type="button" class="attr-btn" id="pplimit-plus" aria-label="Aumentar limite de PP">+</button>
+                    <div class="derived-stat text-stat">
+                        <span class="derived-label">Proficiências</span>
+                        <textarea id="proficiencias-input" placeholder="Armaduras leves, armas simples..."></textarea>
                     </div>
 
-                    <div class="sub-stats-row deslocamento-row">
-                        <label>Deslocamento (m)
-                            <input type="number" id="desloc-metros">
-                        </label>
-                        <span class="deslocamento-ou">ou</span>
-                        <label>Quadrados
-                            <input type="number" id="desloc-quadrados">
-                        </label>
+                    <div class="derived-stat text-stat">
+                        <span class="derived-label">Resistências</span>
+                        <textarea id="resistencias-input" placeholder="Resistência a fogo, imunidade a veneno..."></textarea>
                     </div>
-                </div>
 
-                <div class="derived-stat text-stat">
-                    <span class="derived-label">Proficiências</span>
-                    <textarea id="proficiencias-input" placeholder="Armaduras leves, armas simples..."></textarea>
-                </div>
-
-                <div class="derived-stat text-stat">
-                    <span class="derived-label">Resistências</span>
-                    <textarea id="resistencias-input" placeholder="Resistência a fogo, imunidade a veneno..."></textarea>
                 </div>
 
             </div>
@@ -313,10 +334,11 @@
                             <button type="button" class="secondary-button" id="add-ability">
                                 + Nova habilidade
                             </button>
+                            <button type="button" class="section-toggle" data-section-toggle="habilidades" aria-label="Minimizar Habilidades">▾</button>
                         </div>
                     </div>
 
-                    <div class="abilities-list" id="abilities-list"></div>
+                    <div class="abilities-list" id="abilities-list" data-section="habilidades"></div>
 
                 </div>
 
@@ -338,6 +360,7 @@
                             <button type="button" class="secondary-button" id="add-power">
                                 + Novo poder
                             </button>
+                            <button type="button" class="section-toggle" data-section-toggle="poderes" aria-label="Minimizar Poderes">▾</button>
                         </div>
                     </div>
 
@@ -353,7 +376,7 @@
                         </div>
                     </div>
 
-                    <div class="powers-list" id="powers-list"></div>
+                    <div class="powers-list" id="powers-list" data-section="poderes"></div>
 
                 </div>
 
@@ -373,9 +396,12 @@
                     <h2>Itens carregados</h2>
                 </div>
 
-                <button type="button" class="secondary-button" id="add-equipment">
-                    + Novo item
-                </button>
+                <div class="block-header-actions">
+                    <button type="button" class="secondary-button" id="add-equipment">
+                        + Novo item
+                    </button>
+                    <button type="button" class="section-toggle" data-section-toggle="equipamentos" aria-label="Minimizar Equipamentos">▾</button>
+                </div>
 
             </div>
 
@@ -395,22 +421,26 @@
 
             </div>
 
-            <div class="equipment-table" id="equipment-table">
+            <div data-section="equipamentos">
 
-                <div class="equipment-row equipment-header">
-                    <span>Nome</span>
-                    <span>Custo</span>
-                    <span>Espaços</span>
-                    <span></span>
+                <div class="equipment-table" id="equipment-table">
+
+                    <div class="equipment-row equipment-header">
+                        <span>Nome</span>
+                        <span>Custo</span>
+                        <span>Espaços</span>
+                        <span></span>
+                    </div>
+
                 </div>
 
-            </div>
+                <div class="equipment-rows" id="equipment-rows"></div>
 
-            <div class="equipment-rows" id="equipment-rows"></div>
+                <div class="equipment-total">
+                    <span>Espaços ocupados</span>
+                    <span id="equipment-total-slots">0</span>
+                </div>
 
-            <div class="equipment-total">
-                <span>Espaços ocupados</span>
-                <span id="equipment-total-slots">0</span>
             </div>
 
         </section>
@@ -420,7 +450,16 @@
 
         <section class="sheet-block extras-block">
 
-            <div class="extras-grid">
+            <p class="section-label">
+                ANOTAÇÕES
+            </p>
+
+            <div class="column-title-row">
+                <h2>Extras</h2>
+                <button type="button" class="section-toggle" data-section-toggle="extras" aria-label="Minimizar Extras">▾</button>
+            </div>
+
+            <div class="extras-grid" data-section="extras">
 
                 <div class="field-group">
                     <label for="extra-anotacoes">Anotações</label>

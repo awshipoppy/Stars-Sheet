@@ -101,7 +101,7 @@ const NEX_OPTIONS = buildNexOptions();
 function defaultSkills() {
     const obj = {};
     SKILLS.forEach(skill => {
-        obj[skill.key] = { training: 0, other: 0 };
+        obj[skill.key] = { training: 0, other: 0, attrOverride: null };
     });
     return obj;
 }
@@ -149,7 +149,16 @@ function defaultState() {
             historico: "",
             objetivos: ""
         },
-        accent: "vermelho"
+        accent: "vermelho",
+        collapsedSections: {
+            atributos: false,
+            pericias: false,
+            recursos: false,
+            habilidades: false,
+            poderes: false,
+            equipamentos: false,
+            extras: false
+        }
     };
 }
 
@@ -178,6 +187,7 @@ function loadState() {
             deslocamento: { ...base.deslocamento, ...(saved.deslocamento || {}) },
             skills: { ...base.skills, ...(saved.skills || {}) },
             extras: { ...base.extras, ...(saved.extras || {}) },
+            collapsedSections: { ...base.collapsedSections, ...(saved.collapsedSections || {}) },
             abilities: Array.isArray(saved.abilities) ? saved.abilities : [],
             powers: Array.isArray(saved.powers) ? saved.powers : [],
             equipment: Array.isArray(saved.equipment) ? saved.equipment : []
@@ -311,64 +321,110 @@ function mountToast(innerHtml, isError) {
 // =========================================
 
 // Aceita: "1d10", "1d12 + 5", "1d12-2", "3d8d2" (rola 3d8 e descarta os 2 piores)
-function parseDiceNotation(raw) {
-    const match = String(raw).trim().match(
-        /^(\d*)d(\d+)(?:d(\d+))?\s*(?:([+-])\s*(\d+))?$/i
-    );
-    if (!match) return null;
+// Aceita expressões com vários termos somados/subtraídos, cada um sendo um
+// dado (NdM ou NdMdX, que descarta os X piores) ou um número fixo.
+// Ex: "1d8 + 1d10 + 2d4d1 + 5 - 2"
+function parseDiceExpression(raw) {
+    const normalized = String(raw).replace(/\s+/g, "");
+    if (!normalized) return null;
 
-    const count = match[1] ? parseInt(match[1], 10) : 1;
-    const sides = parseInt(match[2], 10);
-    const drop = match[3] ? parseInt(match[3], 10) : 0;
-    const modSign = match[4];
-    const modVal = match[5] ? parseInt(match[5], 10) : 0;
-    const modifier = modSign === "-" ? -modVal : modVal;
+    const termRegex = /([+-]?)(\d*d\d+(?:d\d+)?|\d+)/gi;
+    const terms = [];
+    let lastIndex = 0;
+    let match;
 
-    if (count < 1 || count > 100) return null;
-    if (sides < 2 || sides > 1000) return null;
-    if (drop < 0 || drop >= count) return null; // sempre precisa sobrar ao menos 1 dado
+    while ((match = termRegex.exec(normalized)) !== null) {
+        if (match.index !== lastIndex) return null; // caractere inesperado entre os termos
+        lastIndex = termRegex.lastIndex;
 
-    return { count, sides, drop, modifier };
+        const sign = match[1] === "-" ? -1 : 1;
+        const parsedTerm = parseDiceTerm(match[2], sign);
+        if (!parsedTerm) return null;
+
+        terms.push(parsedTerm);
+    }
+
+    if (lastIndex !== normalized.length || terms.length === 0) return null;
+
+    return terms;
+}
+
+function parseDiceTerm(body, sign) {
+    const diceMatch = body.match(/^(\d*)d(\d+)(?:d(\d+))?$/i);
+
+    if (diceMatch) {
+        const count = diceMatch[1] ? parseInt(diceMatch[1], 10) : 1;
+        const sides = parseInt(diceMatch[2], 10);
+        const drop = diceMatch[3] ? parseInt(diceMatch[3], 10) : 0;
+
+        if (count < 1 || count > 100) return null;
+        if (sides < 2 || sides > 1000) return null;
+        if (drop < 0 || drop >= count) return null; // sempre precisa sobrar ao menos 1 dado
+
+        return { type: "dice", sign, count, sides, drop };
+    }
+
+    if (/^\d+$/.test(body)) {
+        return { type: "flat", sign, value: parseInt(body, 10) };
+    }
+
+    return null;
 }
 
 function rollCustomDice(raw) {
     const notation = String(raw).trim();
-    const parsed = parseDiceNotation(notation);
+    const terms = parseDiceExpression(notation);
 
-    if (!parsed) {
+    if (!terms) {
         mountToast(`
             <div class="roll-toast-title">Rolagem inválida</div>
-            <div class="roll-toast-error">"${escapeHtml(notation)}" não é uma notação reconhecida. Use algo como 1d10, 1d12 + 5 ou 3d8d2.</div>
+            <div class="roll-toast-error">"${escapeHtml(notation)}" não é uma notação reconhecida. Use algo como 1d10, 1d12 + 5 ou 1d8 + 2d4d1 - 2.</div>
         `, true);
         return;
     }
 
-    const { count, sides, drop, modifier } = parsed;
+    let total = 0;
+    const pieces = [];
 
-    const rolls = Array.from({ length: count }, () => Math.floor(Math.random() * sides) + 1);
+    terms.forEach((term, index) => {
+        let piece;
 
-    // descobre quais índices são os "drop" piores resultados
-    const sortedIndices = rolls
-        .map((v, i) => ({ v, i }))
-        .sort((a, b) => a.v - b.v)
-        .slice(0, drop)
-        .map(x => x.i);
-    const droppedSet = new Set(sortedIndices);
+        if (term.type === "dice") {
+            const rolls = Array.from({ length: term.count }, () => Math.floor(Math.random() * term.sides) + 1);
 
-    const kept = rolls.filter((v, i) => !droppedSet.has(i));
-    const sum = kept.reduce((a, b) => a + b, 0);
-    const total = sum + modifier;
+            const droppedSet = new Set(
+                rolls
+                    .map((v, i) => ({ v, i }))
+                    .sort((a, b) => a.v - b.v)
+                    .slice(0, term.drop)
+                    .map(x => x.i)
+            );
 
-    const diceText = rolls
-        .map((v, i) => droppedSet.has(i) ? `<span class="die-dropped">${v}</span>` : v)
-        .join(", ");
+            const kept = rolls.filter((v, i) => !droppedSet.has(i));
+            const sum = kept.reduce((a, b) => a + b, 0);
+            total += term.sign * sum;
 
-    const modifierText = modifier === 0 ? "" : (modifier > 0 ? ` + ${modifier}` : ` − ${Math.abs(modifier)}`);
-    const dropText = drop > 0 ? ` (descarta ${drop} pior${drop > 1 ? "es" : ""})` : "";
+            const diceText = rolls
+                .map((v, i) => droppedSet.has(i) ? `<span class="die-dropped">${v}</span>` : v)
+                .join(", ");
+
+            const label = `${term.count}d${term.sides}${term.drop ? "d" + term.drop : ""}`;
+            piece = `${label}: [${diceText}]`;
+        } else {
+            total += term.sign * term.value;
+            piece = `${term.value}`;
+        }
+
+        const prefix = index === 0
+            ? (term.sign < 0 ? "− " : "")
+            : (term.sign < 0 ? " − " : " + ");
+
+        pieces.push(prefix + piece);
+    });
 
     mountToast(`
         <div class="roll-toast-title">${escapeHtml(notation)}</div>
-        <div class="roll-toast-dice">[${diceText}]${escapeHtml(dropText)}${escapeHtml(modifierText)}</div>
+        <div class="roll-toast-dice">${pieces.join("")}</div>
         <div class="roll-toast-total">Total: <strong>${total}</strong></div>
     `);
 }
@@ -601,10 +657,11 @@ function renderSkills() {
     skillsList.innerHTML = "";
 
     SKILLS.forEach(skill => {
-        const data = state.skills[skill.key] || { training: 0, other: 0 };
-        const attrValue = state.attributes[skill.attr] || 0;
+        const data = state.skills[skill.key] || { training: 0, other: 0, attrOverride: null };
+        const effectiveAttr = data.attrOverride || skill.attr;
+        const attrValue = state.attributes[effectiveAttr] || 0;
         const total = attrValue + (Number(data.training) || 0) + (Number(data.other) || 0);
-        const color = ATTRIBUTE_COLORS[skill.attr];
+        const color = ATTRIBUTE_COLORS[effectiveAttr];
 
         const row = document.createElement("div");
         row.className = "skill-row";
@@ -614,7 +671,9 @@ function renderSkills() {
         row.innerHTML = `
             <div class="skill-name-group">
                 <span class="skill-name">${escapeHtml(skill.name)}</span>
-                <span class="skill-attr">${ATTRIBUTE_LABELS[skill.attr]}</span>
+                <select class="skill-attr-select" aria-label="Atributo usado em ${escapeHtml(skill.name)}">
+                    ${ATTRIBUTES.map(a => `<option value="${a}" ${effectiveAttr === a ? "selected" : ""}>${ATTRIBUTE_LABELS[a]}</option>`).join("")}
+                </select>
             </div>
             <div class="skill-inputs">
                 <label>Trein.
@@ -857,7 +916,34 @@ function renderAll() {
     renderPowers();
     renderEquipment();
     renderExtras();
+    applySectionCollapse();
 }
+
+
+// =========================================
+// SEÇÕES RECOLHÍVEIS
+// =========================================
+
+function applySectionCollapse() {
+    document.querySelectorAll("[data-section-toggle]").forEach(btn => {
+        const key = btn.dataset.sectionToggle;
+        const collapsed = !!state.collapsedSections[key];
+        const content = document.querySelector(`[data-section="${key}"]`);
+
+        if (content) content.classList.toggle("is-section-hidden", collapsed);
+        btn.classList.toggle("is-collapsed", collapsed);
+        btn.setAttribute("aria-expanded", String(!collapsed));
+    });
+}
+
+document.querySelectorAll("[data-section-toggle]").forEach(btn => {
+    btn.addEventListener("click", () => {
+        const key = btn.dataset.sectionToggle;
+        state.collapsedSections[key] = !state.collapsedSections[key];
+        saveState();
+        applySectionCollapse();
+    });
+});
 
 
 // =========================================
@@ -1080,7 +1166,7 @@ skillsList.addEventListener("input", (e) => {
     if (!row) return;
 
     const key = row.dataset.skill;
-    if (!state.skills[key]) state.skills[key] = { training: 0, other: 0 };
+    if (!state.skills[key]) state.skills[key] = { training: 0, other: 0, attrOverride: null };
 
     if (e.target.classList.contains("skill-training")) {
         state.skills[key].training = Number(e.target.value) || 0;
@@ -1089,6 +1175,8 @@ skillsList.addEventListener("input", (e) => {
         }
     } else if (e.target.classList.contains("skill-other")) {
         state.skills[key].other = Number(e.target.value) || 0;
+    } else if (e.target.classList.contains("skill-attr-select")) {
+        state.skills[key].attrOverride = e.target.value;
     } else {
         return;
     }
@@ -1103,13 +1191,15 @@ skillsList.addEventListener("click", (e) => {
     if (!row) return;
 
     if (e.target.closest(".skill-inputs")) return;
+    if (e.target.closest(".skill-attr-select")) return;
 
     const key = row.dataset.skill;
     const skill = SKILLS.find(s => s.key === key);
     if (!skill) return;
 
-    const data = state.skills[key] || { training: 0, other: 0 };
-    const attrValue = state.attributes[skill.attr] || 0;
+    const data = state.skills[key] || { training: 0, other: 0, attrOverride: null };
+    const effectiveAttr = data.attrOverride || skill.attr;
+    const attrValue = state.attributes[effectiveAttr] || 0;
     const total = attrValue + (Number(data.training) || 0) + (Number(data.other) || 0);
 
     performRoll(skill.name, total);
@@ -1450,6 +1540,7 @@ importFileInput.addEventListener("change", () => {
                 deslocamento: { ...base.deslocamento, ...(parsed.deslocamento || {}) },
                 skills: { ...base.skills, ...(parsed.skills || {}) },
                 extras: { ...base.extras, ...(parsed.extras || {}) },
+                collapsedSections: { ...base.collapsedSections, ...(parsed.collapsedSections || {}) },
                 abilities: Array.isArray(parsed.abilities) ? parsed.abilities : [],
                 powers: Array.isArray(parsed.powers) ? parsed.powers : [],
                 equipment: Array.isArray(parsed.equipment) ? parsed.equipment : []
