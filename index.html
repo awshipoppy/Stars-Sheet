@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Stars RPG</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ================= NAVBAR ================= -->
+
+    <header class="navbar">
+
+        <div class="logo">
+            <span class="logo-symbol">✦</span>
+            <span>STARS RPG</span>
+        </div>
+
+        <nav id="main-nav">
+            <a href="#inicio">Início</a>
+            <a href="#universo">Universo</a>
+            <a href="#regras">Regras</a>
+            <a href="#classes">Classes</a>
+            <a href="ficha.html">Ficha</a>
+            <a href="#bestiario">Bestiário</a>
+            <a href="#itens">Itens</a>
+        </nav>
+
+        <a href="ficha.html" class="character-button">
+            Criar Personagem
+        </a>
+
+        <button class="menu-button" onclick="toggleMenu()">
+            ☰
+        </button>
+
+    </header>
+
+
+    <!-- ================= HERO ================= -->
+
+    <main>
+
+        <section id="inicio" class="hero">
+
+            <div class="hero-content">
+
+                <p class="eyebrow">
+                    UM RPG DE FANTASIA SOMBRIA
+                </p>
+
+                <h1>
+                    O mundo está<br>
+                    <span>morrendo.</span>
+                </h1>
+
+                <p class="hero-description">
+                    Entre em um mundo onde antigos poderes despertam,
+                    impérios desaparecem e cada decisão pode mudar o destino
+                    de uma era.
+                </p>
+
+                <div class="hero-buttons">
+
+                    <a href="ficha.html" class="primary-button">
+                        Começar a jogar
+                    </a>
+
+                    <a href="#universo" class="secondary-button">
+                        Conhecer o universo
+                    </a>
+
+                </div>
+
+            </div>
+
+            <div class="hero-decoration">
+
+                <div class="magic-circle"></div>
+
+                <div class="floating-rune rune-1">✦</div>
+                <div class="floating-rune rune-2">◇</div>
+                <div class="floating-rune rune-3">✧</div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= INTRO ================= -->
+
+        <section class="intro">
+
+            <p class="section-label">
+                O CHAMADO
+            </p>
+
+            <h2>
+                Uma história escrita<br>
+                por vocês.
+            </h2>
+
+            <p>
+                Crie personagens, explore lugares esquecidos, enfrente
+                criaturas impossíveis e construa histórias que jamais
+                serão esquecidas.
+            </p>
+
+        </section>
+
+
+        <!-- ================= UNIVERSO ================= -->
+
+        <section id="universo" class="section">
+
+            <div class="section-header">
+
+                <div>
+                    <p class="section-label">O MUNDO</p>
+
+                    <h2>Explore o Universo</h2>
+                </div>
+
+                <p>
+                    Descubra os lugares, povos e forças que moldam
+                    este mundo.
+                </p>
+
+            </div>
+
+
+            <div class="cards">
+
+                <article class="lore-card">
+
+                    <div class="card-icon">☽</div>
+
+                    <h3>As Terras Antigas</h3>
+
+                    <p>
+                        Reinos esquecidos, cidades destruídas e
+                        territórios onde a realidade não funciona
+                        como deveria.
+                    </p>
+
+                    <a href="#">Explorar →</a>
+
+                </article>
+
+
+                <article class="lore-card">
+
+                    <div class="card-icon">♜</div>
+
+                    <h3>Os Grandes Reinos</h3>
+
+                    <p>
+                        Nações disputam territórios enquanto antigas
+                        alianças começam a ruir.
+                    </p>
+
+                    <a href="#">Explorar →</a>
+
+                </article>
+
+
+                <article class="lore-card">
+
+                    <div class="card-icon">✦</div>
+
+                    <h3>Forças Sobrenaturais</h3>
+
+                    <p>
+                        Entidades antigas observam o mundo através
+                        de lugares que nenhum mortal deveria alcançar.
+                    </p>
+
+                    <a href="#">Explorar →</a>
+
+                </article>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= REGRAS ================= -->
+
+        <section id="regras" class="rules-section">
+
+            <div class="rules-content">
+
+                <p class="section-label">
+                    O SISTEMA
+                </p>
+
+                <h2>
+                    Regras feitas para<br>
+                    <span>criar histórias.</span>
+                </h2>
+
+                <p>
+                    Um sistema simples de aprender, mas profundo o
+                    suficiente para permitir personagens completamente
+                    diferentes.
+                </p>
+
+                <button class="primary-button">
+                    Ler as regras
+                </button>
+
+            </div>
+
+
+            <div class="rules-grid">
+
+                <div class="rule">
+                    <strong>01</strong>
+                    <h3>Atributos</h3>
+                    <p>Defina as capacidades fundamentais do seu personagem.</p>
+                </div>
+
+                <div class="rule">
+                    <strong>02</strong>
+                    <h3>Perícias</h3>
+                    <p>Especialize-se e desenvolva seu próprio estilo.</p>
+                </div>
+
+                <div class="rule">
+                    <strong>03</strong>
+                    <h3>Combate</h3>
+                    <p>Enfrente inimigos utilizando estratégia e criatividade.</p>
+                </div>
+
+                <div class="rule">
+                    <strong>04</strong>
+                    <h3>Progressão</h3>
+                    <p>Seu personagem evolui conforme suas aventuras.</p>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= CLASSES ================= -->
+
+        <section id="classes" class="section">
+
+            <div class="section-header">
+
+                <div>
+
+                    <p class="section-label">
+                        PERSONAGENS
+                    </p>
+
+                    <h2>Escolha seu caminho</h2>
+
+                </div>
+
+                <p>
+                    Nenhum personagem precisa seguir o mesmo destino.
+                </p>
+
+            </div>
+
+
+            <div class="class-grid">
+
+                <article class="class-card warrior">
+
+                    <div class="class-number">
+                        I
+                    </div>
+
+                    <h3>Duelista</h3>
+
+                    <p>
+                        Guerreiros especializados em combate direto,
+                        velocidade e técnica.
+                    </p>
+
+                    <div class="class-tags">
+                        <span>Combate</span>
+                        <span>Agilidade</span>
+                    </div>
+
+                </article>
+
+
+                <article class="class-card specialist">
+
+                    <div class="class-number">
+                        II
+                    </div>
+
+                    <h3>Especialista</h3>
+
+                    <p>
+                        Mestres de habilidades, conhecimento e
+                        soluções inesperadas.
+                    </p>
+
+                    <div class="class-tags">
+                        <span>Perícias</span>
+                        <span>Estratégia</span>
+                    </div>
+
+                </article>
+
+
+                <article class="class-card individualist">
+
+                    <div class="class-number">
+                        III
+                    </div>
+
+                    <h3>Individualista</h3>
+
+                    <p>
+                        Pessoas que desafiam as regras e desenvolvem
+                        poderes únicos.
+                    </p>
+
+                    <div class="class-tags">
+                        <span>Poderes</span>
+                        <span>Versatilidade</span>
+                    </div>
+
+                </article>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= BESTIÁRIO ================= -->
+
+        <section id="bestiario" class="section dark-section">
+
+            <div class="section-header">
+
+                <div>
+
+                    <p class="section-label">
+                        PERIGOS
+                    </p>
+
+                    <h2>Bestiário</h2>
+
+                </div>
+
+                <button class="secondary-button">
+                    Ver todas as criaturas
+                </button>
+
+            </div>
+
+
+            <div class="monster-grid">
+
+                <article class="monster-card">
+
+                    <div class="monster-symbol">
+                        ☠
+                    </div>
+
+                    <div>
+
+                        <span class="danger">
+                            AMEAÇA II
+                        </span>
+
+                        <h3>O Devorador</h3>
+
+                        <p>
+                            Criatura nascida nas profundezas.
+                        </p>
+
+                    </div>
+
+                </article>
+
+
+                <article class="monster-card">
+
+                    <div class="monster-symbol">
+                        ◈
+                    </div>
+
+                    <div>
+
+                        <span class="danger">
+                            AMEAÇA III
+                        </span>
+
+                        <h3>Guardião Esquecido</h3>
+
+                        <p>
+                            Uma entidade que protege ruínas antigas.
+                        </p>
+
+                    </div>
+
+                </article>
+
+
+                <article class="monster-card">
+
+                    <div class="monster-symbol">
+                        ♢
+                    </div>
+
+                    <div>
+
+                        <span class="danger">
+                            AMEAÇA IV
+                        </span>
+
+                        <h3>A Besta Cinzenta</h3>
+
+                        <p>
+                            Algo que um dia foi humano.
+                        </p>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= DADOS ================= -->
+
+        <section class="dice-section">
+
+            <div>
+
+                <p class="section-label">
+                    FERRAMENTAS
+                </p>
+
+                <h2>
+                    Role os dados.
+                </h2>
+
+                <p>
+                    Faça uma rolagem rápida para sua próxima aventura.
+                </p>
+
+            </div>
+
+
+            <div class="dice-box">
+
+                <div id="dice-result">
+                    ?
+                </div>
+
+                <div class="dice-buttons">
+
+                    <button onclick="rollDice(4)">
+                        d4
+                    </button>
+
+                    <button onclick="rollDice(6)">
+                        d6
+                    </button>
+
+                    <button onclick="rollDice(8)">
+                        d8
+                    </button>
+
+                    <button onclick="rollDice(10)">
+                        d10
+                    </button>
+
+                    <button onclick="rollDice(12)">
+                        d12
+                    </button>
+
+                    <button onclick="rollDice(20)">
+                        d20
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= CTA ================= -->
+
+        <section class="final-cta">
+
+            <p class="section-label">
+                SUA HISTÓRIA COMEÇA AGORA
+            </p>
+
+            <h2>
+                Qual será o seu legado?
+            </h2>
+
+            <p>
+                Reúna seus amigos. Crie seus personagens.
+                E descubra o que existe além do desconhecido.
+            </p>
+
+            <a href="ficha.html" class="primary-button">
+                Criar personagem
+            </a>
+
+        </section>
+
+    </main>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer>
+
+        <div class="footer-logo">
+            ✦ STARS RPG
+        </div>
+
+        <div class="footer-links">
+
+            <a href="#">Discord</a>
+            <a href="#">Instagram</a>
+            <a href="#">Downloads</a>
+            <a href="#">Contato</a>
+
+        </div>
+
+        <p>
+            © 2026 Stars RPG. Todos os direitos reservados.
+        </p>
+
+    </footer>
+
+
+    <script src="script.js"></script>
+
+</body>
+</html>
