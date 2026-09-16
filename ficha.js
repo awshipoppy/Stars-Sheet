@@ -129,6 +129,7 @@ function defaultState() {
         defenseBonus: 0,
         ppLimitBonus: 0,
         dtPoderesBonus: 0,
+        dtPoderesAttr: "poder",
         capacidadeCarga: 7,
         esquiva: 0,
         bloqueio: 0,
@@ -141,6 +142,16 @@ function defaultState() {
         skills: defaultSkills(),
         abilities: [],
         powers: [],
+        characteristics: [],
+        affinities: {
+            realidade: 0,
+            tempo: 0,
+            transformacao: 0,
+            poder: 0,
+            mente: 0,
+            espaco: 0,
+            alma: 0
+        },
         equipment: [],
         extras: {
             anotacoes: "",
@@ -150,12 +161,16 @@ function defaultState() {
             objetivos: ""
         },
         accent: "vermelho",
+        accentCustomHex: "#c0392b",
         collapsedSections: {
+            dados: false,
             atributos: false,
             pericias: false,
+            caracteristicas: false,
             recursos: false,
             habilidades: false,
             poderes: false,
+            afinidades: false,
             equipamentos: false,
             extras: false
         }
@@ -188,8 +203,10 @@ function loadState() {
             skills: { ...base.skills, ...(saved.skills || {}) },
             extras: { ...base.extras, ...(saved.extras || {}) },
             collapsedSections: { ...base.collapsedSections, ...(saved.collapsedSections || {}) },
+            affinities: { ...base.affinities, ...(saved.affinities || {}) },
             abilities: Array.isArray(saved.abilities) ? saved.abilities : [],
             powers: Array.isArray(saved.powers) ? saved.powers : [],
+            characteristics: Array.isArray(saved.characteristics) ? saved.characteristics : [],
             equipment: Array.isArray(saved.equipment) ? saved.equipment : []
         };
     } catch (e) {
@@ -225,6 +242,7 @@ const portraitImg = document.getElementById("portrait-img");
 const portraitInput = document.getElementById("portrait-input");
 
 const themeSwatches = document.getElementById("theme-swatches");
+const themeCustomColorInput = document.getElementById("theme-custom-color");
 
 const attributesGrid = document.getElementById("attributes-grid");
 const resourceBars = document.getElementById("resource-bars");
@@ -238,6 +256,7 @@ const descMetrosInput = document.getElementById("desloc-metros");
 const descQuadrosInput = document.getElementById("desloc-quadrados");
 const dtpoderesMinusBtn = document.getElementById("dtpoderes-minus");
 const dtpoderesPlusBtn = document.getElementById("dtpoderes-plus");
+const dtpoderesAttrSelect = document.getElementById("dtpoderes-attr");
 const proficienciasInput = document.getElementById("proficiencias-input");
 const resistenciasInput = document.getElementById("resistencias-input");
 
@@ -252,6 +271,11 @@ const addAbilityBtn = document.getElementById("add-ability");
 
 const powersList = document.getElementById("powers-list");
 const addPowerBtn = document.getElementById("add-power");
+
+const characteristicsList = document.getElementById("characteristics-list");
+const addCharacteristicBtn = document.getElementById("add-characteristic");
+
+const affinitiesGrid = document.querySelector(".affinities-grid");
 
 const capacidadeInput = document.getElementById("capacidade-carga");
 const creditsValueEl = document.getElementById("credits-value");
@@ -436,13 +460,19 @@ function rollCustomDice(raw) {
 
 function applyTheme() {
     // aplica no armazenamento compartilhado do site inteiro (script.js)
-    if (typeof setSiteAccentName === "function") {
+    if (state.accent === "custom") {
+        if (typeof setSiteAccentCustomHex === "function") {
+            setSiteAccentCustomHex(state.accentCustomHex);
+        }
+    } else if (typeof setSiteAccentName === "function") {
         setSiteAccentName(state.accent);
     }
 
     themeSwatches.querySelectorAll(".theme-swatch").forEach(btn => {
         btn.classList.toggle("active", btn.dataset.theme === state.accent);
     });
+
+    themeCustomColorInput.value = state.accentCustomHex;
 }
 
 
@@ -607,7 +637,8 @@ function renderResourceBars() {
 
 function computePpLimit() {
     const nex = Number(state.nex) || 0;
-    return Math.floor(nex / 5) + (Number(state.ppLimitBonus) || 0);
+    const nexForCalc = nex >= 99 ? 100 : nex; // 99% conta como 100% pra esse cálculo
+    return Math.floor(nexForCalc / 5) + (Number(state.ppLimitBonus) || 0);
 }
 
 function renderDerived() {
@@ -630,7 +661,19 @@ function renderDerived() {
     descMetrosInput.value = state.deslocamento.metros;
     descQuadrosInput.value = state.deslocamento.quadrados;
 
-    const dtPoderes = 5 + Math.floor(ppLimit / 2) + (Number(state.dtPoderesBonus) || 0);
+    if (!dtpoderesAttrSelect.dataset.built) {
+        ATTRIBUTES.forEach(a => {
+            const opt = document.createElement("option");
+            opt.value = a;
+            opt.textContent = ATTRIBUTE_LABELS[a];
+            dtpoderesAttrSelect.appendChild(opt);
+        });
+        dtpoderesAttrSelect.dataset.built = "true";
+    }
+    dtpoderesAttrSelect.value = state.dtPoderesAttr;
+
+    const dtAttrValue = state.attributes[state.dtPoderesAttr] || 0;
+    const dtPoderes = 5 + Math.floor(ppLimit / 2) + dtAttrValue + (Number(state.dtPoderesBonus) || 0);
     document.getElementById("dtpoderes-value").textContent = dtPoderes;
     document.getElementById("dtpoderes-bonus-display").textContent =
         state.dtPoderesBonus > 0 ? `+${state.dtPoderesBonus}` : state.dtPoderesBonus;
@@ -690,6 +733,30 @@ function renderSkills() {
 
         skillsList.appendChild(row);
     });
+}
+
+// Atualiza só o total/cor de UMA linha, sem recriar o DOM — evita perder o
+// foco do campo e o "pulo" de rolagem que acontecia ao digitar.
+function updateSkillRowDisplay(key) {
+    const row = skillsList.querySelector(`[data-skill="${key}"]`);
+    if (!row) return;
+
+    const skill = SKILLS.find(s => s.key === key);
+    if (!skill) return;
+
+    const data = state.skills[key] || { training: 0, other: 0, attrOverride: null };
+    const effectiveAttr = data.attrOverride || skill.attr;
+    const color = ATTRIBUTE_COLORS[effectiveAttr];
+    const total = (state.attributes[effectiveAttr] || 0) + (Number(data.training) || 0) + (Number(data.other) || 0);
+
+    row.style.setProperty("--skill-color", color);
+
+    const totalEl = row.querySelector(".skill-total");
+    if (totalEl) totalEl.textContent = total;
+}
+
+function updateAllSkillRowDisplays() {
+    SKILLS.forEach(skill => updateSkillRowDisplay(skill.key));
 }
 
 
@@ -836,6 +903,88 @@ function getElementColor(key) {
 
 
 // =========================================
+// RENDER — CARACTERÍSTICAS
+// =========================================
+
+const CHARACTERISTIC_COLORS = {
+    positiva: "#3dbf6b",
+    negativa: "#c0392b",
+    anatema: "#9b3dc9"
+};
+
+function renderCharacteristics() {
+    characteristicsList.innerHTML = "";
+
+    if (state.characteristics.length === 0) {
+        const empty = document.createElement("p");
+        empty.className = "empty-state";
+        empty.textContent = "Nenhuma característica registrada ainda.";
+        characteristicsList.appendChild(empty);
+        return;
+    }
+
+    state.characteristics.forEach((item, index) => {
+        const color = CHARACTERISTIC_COLORS[item.type] || "#333333";
+
+        const card = document.createElement("div");
+        card.className = "characteristic-card";
+        card.dataset.index = index;
+        card.style.setProperty("--char-color", color);
+
+        card.innerHTML = `
+            <div class="characteristic-header">
+                <input
+                    type="text"
+                    class="characteristic-title"
+                    placeholder="Nome da característica"
+                    value="${escapeHtml(item.title || "")}"
+                >
+                <select class="characteristic-type">
+                    <option value="">Selecione</option>
+                    <option value="positiva" ${item.type === "positiva" ? "selected" : ""}>Positiva</option>
+                    <option value="negativa" ${item.type === "negativa" ? "selected" : ""}>Negativa</option>
+                    <option value="anatema" ${item.type === "anatema" ? "selected" : ""}>Anátema</option>
+                </select>
+            </div>
+            <textarea
+                class="characteristic-desc"
+                placeholder="Como ela funciona..."
+            >${escapeHtml(item.desc || "")}</textarea>
+            <button type="button" class="characteristic-remove" aria-label="Remover característica">✕</button>
+        `;
+
+        characteristicsList.appendChild(card);
+    });
+}
+
+
+// =========================================
+// RENDER — AFINIDADES
+// =========================================
+
+function renderAffinities() {
+    if (!affinitiesGrid) return;
+
+    affinitiesGrid.querySelectorAll(".affinity-item").forEach(item => {
+        const key = item.dataset.element;
+        const value = Number(state.affinities[key]) || 0;
+
+        item.querySelector(".affinity-value").textContent = value;
+
+        const nameEl = item.querySelector(".affinity-name");
+        const color = getElementColor(key);
+        const glow = Math.min(6 + value * 3, 60);
+
+        if (value > 0) {
+            nameEl.style.textShadow = `0 0 ${glow}px ${color}, 0 0 ${glow / 2}px ${color}`;
+        } else {
+            nameEl.style.textShadow = "none";
+        }
+    });
+}
+
+
+// =========================================
 // RENDER — EQUIPAMENTOS
 // =========================================
 
@@ -912,8 +1061,10 @@ function renderAll() {
     renderResourceBars();
     renderDerived();
     renderSkills();
+    renderCharacteristics();
     renderAbilities();
     renderPowers();
+    renderAffinities();
     renderEquipment();
     renderExtras();
     applySectionCollapse();
@@ -966,6 +1117,13 @@ themeSwatches.addEventListener("click", (e) => {
     if (!btn) return;
 
     state.accent = btn.dataset.theme;
+    saveState();
+    applyTheme();
+});
+
+themeCustomColorInput.addEventListener("input", () => {
+    state.accent = "custom";
+    state.accentCustomHex = themeCustomColorInput.value;
     saveState();
     applyTheme();
 });
@@ -1071,7 +1229,7 @@ attributesGrid.addEventListener("click", (e) => {
         renderAttributes();
         renderResourceBars();
         renderDerived();
-        renderSkills();
+        updateAllSkillRowDisplays();
         return;
     }
 
@@ -1146,6 +1304,12 @@ dtpoderesPlusBtn.addEventListener("click", () => {
     renderDerived();
 });
 
+dtpoderesAttrSelect.addEventListener("change", () => {
+    state.dtPoderesAttr = dtpoderesAttrSelect.value;
+    saveState();
+    renderDerived();
+});
+
 proficienciasInput.addEventListener("input", () => {
     state.proficiencias = proficienciasInput.value;
     saveState();
@@ -1172,6 +1336,7 @@ skillsList.addEventListener("input", (e) => {
         state.skills[key].training = Number(e.target.value) || 0;
         if (key === "reflexos" || key === "fortitude") {
             recalcEsquivaBloqueio();
+            renderDerived();
         }
     } else if (e.target.classList.contains("skill-other")) {
         state.skills[key].other = Number(e.target.value) || 0;
@@ -1182,8 +1347,7 @@ skillsList.addEventListener("input", (e) => {
     }
 
     saveState();
-    renderSkills();
-    renderDerived();
+    updateSkillRowDisplay(key);
 });
 
 skillsList.addEventListener("click", (e) => {
@@ -1383,6 +1547,91 @@ powersList.addEventListener("click", (e) => {
 
 
 // =========================================
+// EVENTOS — CARACTERÍSTICAS
+// =========================================
+
+addCharacteristicBtn.addEventListener("click", () => {
+    state.characteristics.push({ title: "", type: "", desc: "" });
+    saveState();
+    renderCharacteristics();
+
+    const cards = characteristicsList.querySelectorAll(".characteristic-card");
+    const last = cards[cards.length - 1];
+    if (last) last.querySelector(".characteristic-title").focus();
+});
+
+characteristicsList.addEventListener("input", (e) => {
+    const card = e.target.closest(".characteristic-card");
+    if (!card) return;
+
+    const index = Number(card.dataset.index);
+    if (!state.characteristics[index]) return;
+
+    if (e.target.classList.contains("characteristic-title")) {
+        state.characteristics[index].title = e.target.value;
+    } else if (e.target.classList.contains("characteristic-desc")) {
+        state.characteristics[index].desc = e.target.value;
+    } else {
+        return;
+    }
+
+    saveState();
+});
+
+characteristicsList.addEventListener("change", (e) => {
+    const card = e.target.closest(".characteristic-card");
+    if (!card) return;
+
+    const index = Number(card.dataset.index);
+    if (!state.characteristics[index]) return;
+
+    if (e.target.classList.contains("characteristic-type")) {
+        state.characteristics[index].type = e.target.value;
+        saveState();
+        renderCharacteristics();
+    }
+});
+
+characteristicsList.addEventListener("click", (e) => {
+    const removeBtn = e.target.closest(".characteristic-remove");
+    if (!removeBtn) return;
+
+    const card = e.target.closest(".characteristic-card");
+    const index = Number(card.dataset.index);
+
+    state.characteristics.splice(index, 1);
+    saveState();
+    renderCharacteristics();
+});
+
+
+// =========================================
+// EVENTOS — AFINIDADES
+// =========================================
+
+if (affinitiesGrid) {
+    affinitiesGrid.addEventListener("click", (e) => {
+        const item = e.target.closest(".affinity-item");
+        if (!item) return;
+
+        const key = item.dataset.element;
+        if (!(key in state.affinities)) return;
+
+        if (e.target.closest(".affinity-plus")) {
+            state.affinities[key] = (Number(state.affinities[key]) || 0) + 1;
+        } else if (e.target.closest(".affinity-minus")) {
+            state.affinities[key] = (Number(state.affinities[key]) || 0) - 1;
+        } else {
+            return;
+        }
+
+        saveState();
+        renderAffinities();
+    });
+}
+
+
+// =========================================
 // EVENTOS — EQUIPAMENTOS
 // =========================================
 
@@ -1541,8 +1790,10 @@ importFileInput.addEventListener("change", () => {
                 skills: { ...base.skills, ...(parsed.skills || {}) },
                 extras: { ...base.extras, ...(parsed.extras || {}) },
                 collapsedSections: { ...base.collapsedSections, ...(parsed.collapsedSections || {}) },
+                affinities: { ...base.affinities, ...(parsed.affinities || {}) },
                 abilities: Array.isArray(parsed.abilities) ? parsed.abilities : [],
                 powers: Array.isArray(parsed.powers) ? parsed.powers : [],
+                characteristics: Array.isArray(parsed.characteristics) ? parsed.characteristics : [],
                 equipment: Array.isArray(parsed.equipment) ? parsed.equipment : []
             };
 

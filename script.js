@@ -59,6 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // =========================================
 
 const SITE_ACCENT_KEY = "reino-alem-site-accent";
+const SITE_ACCENT_CUSTOM_KEY = "reino-alem-site-accent-custom";
 
 const SITE_ACCENT_COLORS = {
     amarelo: "#d9c23d",
@@ -67,7 +68,8 @@ const SITE_ACCENT_COLORS = {
     "azul-escuro": "#234a7a",
     roxo: "#9b3dc9",
     vermelho: "#c0392b",
-    laranja: "#d97a3d"
+    laranja: "#d97a3d",
+    branco: "#f2f2f2"
 };
 
 function getSiteAccentName() {
@@ -87,9 +89,26 @@ function setSiteAccentName(name) {
     applySiteAccent();
 }
 
+function getSiteAccentCustomHex() {
+    try {
+        return localStorage.getItem(SITE_ACCENT_CUSTOM_KEY) || "#c0392b";
+    } catch (e) {
+        return "#c0392b";
+    }
+}
+
+function setSiteAccentCustomHex(hex) {
+    try {
+        localStorage.setItem(SITE_ACCENT_CUSTOM_KEY, hex);
+    } catch (e) {
+        // armazenamento indisponível — o tema só vale para esta sessão
+    }
+    setSiteAccentName("custom");
+}
+
 function applySiteAccent() {
     const name = getSiteAccentName();
-    const hex = SITE_ACCENT_COLORS[name] || SITE_ACCENT_COLORS.vermelho;
+    const hex = name === "custom" ? getSiteAccentCustomHex() : (SITE_ACCENT_COLORS[name] || SITE_ACCENT_COLORS.vermelho);
     document.documentElement.style.setProperty("--site-accent", hex);
 }
 

@@ -62,7 +62,13 @@
                 <button type="button" class="theme-swatch" data-theme="roxo" aria-label="Roxo"></button>
                 <button type="button" class="theme-swatch" data-theme="vermelho" aria-label="Vermelho"></button>
                 <button type="button" class="theme-swatch" data-theme="laranja" aria-label="Laranja"></button>
+                <button type="button" class="theme-swatch theme-swatch-white" data-theme="branco" aria-label="Branco"></button>
             </div>
+
+            <label class="theme-custom-label" for="theme-custom-color">
+                Cor personalizada
+                <input type="color" id="theme-custom-color" value="#c0392b">
+            </label>
 
         </section>
 
@@ -196,6 +202,29 @@
         </section>
 
 
+        <!-- ================= CARACTERÍSTICAS ================= -->
+
+        <section class="sheet-block characteristics-block">
+
+            <div class="block-header">
+                <div>
+                    <p class="section-label">TRAÇOS</p>
+                    <h2>Características</h2>
+                </div>
+
+                <div class="block-header-actions">
+                    <button type="button" class="secondary-button" id="add-characteristic">
+                        + Nova característica
+                    </button>
+                    <button type="button" class="section-toggle" data-section-toggle="caracteristicas" aria-label="Minimizar Características">▾</button>
+                </div>
+            </div>
+
+            <div class="characteristics-list" id="characteristics-list" data-section="caracteristicas"></div>
+
+        </section>
+
+
         <!-- ================= ROLAGEM DE DADOS ================= -->
 
         <section class="sheet-block dice-block">
@@ -204,25 +233,32 @@
                 FERRAMENTAS
             </p>
 
-            <h2>Rolagem de Dados</h2>
-
-            <p class="sheet-block-hint">
-                Use os botões rápidos ou escreva sua própria rolagem, somando quantos termos quiser. Ex: <code>1d10</code>, <code>1d12 + 5</code>, <code>3d8d2</code> (descarta os 2 piores), ou <code>1d8 + 1d10 + 2d4d1 + 5 - 2</code>.
-            </p>
-
-            <div class="dice-quick-buttons">
-                <button type="button" class="dice-quick-btn" data-sides="4">d4</button>
-                <button type="button" class="dice-quick-btn" data-sides="6">d6</button>
-                <button type="button" class="dice-quick-btn" data-sides="8">d8</button>
-                <button type="button" class="dice-quick-btn" data-sides="10">d10</button>
-                <button type="button" class="dice-quick-btn" data-sides="12">d12</button>
-                <button type="button" class="dice-quick-btn" data-sides="20">d20</button>
-                <button type="button" class="dice-quick-btn" data-sides="100">d100</button>
+            <div class="column-title-row">
+                <h2>Rolagem de Dados</h2>
+                <button type="button" class="section-toggle" data-section-toggle="dados" aria-label="Minimizar Rolagem de Dados">▾</button>
             </div>
 
-            <div class="dice-custom-form">
-                <input type="text" id="dice-custom-input" placeholder="Ex: 3d8d2 + 4" autocomplete="off">
-                <button type="button" class="primary-button" id="dice-custom-roll">Rolar</button>
+            <div data-section="dados">
+
+                <p class="sheet-block-hint">
+                    Use os botões rápidos ou escreva sua própria rolagem, somando quantos termos quiser. Ex: <code>1d10</code>, <code>1d12 + 5</code>, <code>3d8d2</code> (descarta os 2 piores), ou <code>1d8 + 1d10 + 2d4d1 + 5 - 2</code>.
+                </p>
+
+                <div class="dice-quick-buttons">
+                    <button type="button" class="dice-quick-btn" data-sides="4">d4</button>
+                    <button type="button" class="dice-quick-btn" data-sides="6">d6</button>
+                    <button type="button" class="dice-quick-btn" data-sides="8">d8</button>
+                    <button type="button" class="dice-quick-btn" data-sides="10">d10</button>
+                    <button type="button" class="dice-quick-btn" data-sides="12">d12</button>
+                    <button type="button" class="dice-quick-btn" data-sides="20">d20</button>
+                    <button type="button" class="dice-quick-btn" data-sides="100">d100</button>
+                </div>
+
+                <div class="dice-custom-form">
+                    <input type="text" id="dice-custom-input" placeholder="Ex: 3d8d2 + 4" autocomplete="off">
+                    <button type="button" class="primary-button" id="dice-custom-roll">Rolar</button>
+                </div>
+
             </div>
 
         </section>
@@ -367,7 +403,13 @@
                     <div class="derived-stat dtpoderes-stat">
                         <span class="derived-label">DT para Poderes</span>
                         <span class="derived-value" id="dtpoderes-value">5</span>
-                        <span class="derived-formula">5 + (Limite de PP ÷ 2)</span>
+                        <span class="derived-formula">5 + (Limite de PP ÷ 2) + atributo</span>
+
+                        <div class="sub-stats-row">
+                            <label>Atributo
+                                <select id="dtpoderes-attr"></select>
+                            </label>
+                        </div>
 
                         <div class="pplimit-adjust">
                             <button type="button" class="attr-btn" id="dtpoderes-minus" aria-label="Diminuir DT para Poderes">–</button>
@@ -378,6 +420,99 @@
 
                     <div class="powers-list" id="powers-list" data-section="poderes"></div>
 
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= AFINIDADES ================= -->
+
+        <section class="sheet-block affinities-block">
+
+            <div class="column-title-row">
+                <div>
+                    <p class="section-label">ELEMENTOS</p>
+                    <h2>Afinidades</h2>
+                </div>
+                <button type="button" class="section-toggle" data-section-toggle="afinidades" aria-label="Minimizar Afinidades">▾</button>
+            </div>
+
+            <p class="sheet-block-hint">
+                Quanto maior a afinidade, mais o nome do elemento brilha.
+            </p>
+
+            <div class="affinities-grid" data-section="afinidades">
+
+                <div class="affinity-item" data-element="espaco">
+                    <img src="assets/elemento-espaco.png" alt="Espaço" class="affinity-icon">
+                    <span class="affinity-name">Espaço</span>
+                    <div class="attribute-control">
+                        <button type="button" class="attr-btn affinity-minus" aria-label="Diminuir afinidade com Espaço">–</button>
+                        <span class="affinity-value">0</span>
+                        <button type="button" class="attr-btn affinity-plus" aria-label="Aumentar afinidade com Espaço">+</button>
+                    </div>
+                </div>
+
+                <div class="affinity-item" data-element="realidade">
+                    <img src="assets/elemento-realidade.png" alt="Realidade" class="affinity-icon">
+                    <span class="affinity-name">Realidade</span>
+                    <div class="attribute-control">
+                        <button type="button" class="attr-btn affinity-minus" aria-label="Diminuir afinidade com Realidade">–</button>
+                        <span class="affinity-value">0</span>
+                        <button type="button" class="attr-btn affinity-plus" aria-label="Aumentar afinidade com Realidade">+</button>
+                    </div>
+                </div>
+
+                <div class="affinity-item" data-element="tempo">
+                    <img src="assets/elemento-tempo.png" alt="Tempo" class="affinity-icon">
+                    <span class="affinity-name">Tempo</span>
+                    <div class="attribute-control">
+                        <button type="button" class="attr-btn affinity-minus" aria-label="Diminuir afinidade com Tempo">–</button>
+                        <span class="affinity-value">0</span>
+                        <button type="button" class="attr-btn affinity-plus" aria-label="Aumentar afinidade com Tempo">+</button>
+                    </div>
+                </div>
+
+                <div class="affinity-item affinity-center" data-element="poder">
+                    <img src="assets/elemento-poder.png" alt="Poder" class="affinity-icon">
+                    <span class="affinity-name">Poder</span>
+                    <div class="attribute-control">
+                        <button type="button" class="attr-btn affinity-minus" aria-label="Diminuir afinidade com Poder">–</button>
+                        <span class="affinity-value">0</span>
+                        <button type="button" class="attr-btn affinity-plus" aria-label="Aumentar afinidade com Poder">+</button>
+                    </div>
+                </div>
+
+                <div class="affinity-item" data-element="transformacao">
+                    <img src="assets/elemento-transformacao.png" alt="Transformação" class="affinity-icon">
+                    <span class="affinity-name">Transformação</span>
+                    <div class="attribute-control">
+                        <button type="button" class="attr-btn affinity-minus" aria-label="Diminuir afinidade com Transformação">–</button>
+                        <span class="affinity-value">0</span>
+                        <button type="button" class="attr-btn affinity-plus" aria-label="Aumentar afinidade com Transformação">+</button>
+                    </div>
+                </div>
+
+                <div class="affinity-item" data-element="alma">
+                    <img src="assets/elemento-alma.png" alt="Alma" class="affinity-icon">
+                    <span class="affinity-name">Alma</span>
+                    <div class="attribute-control">
+                        <button type="button" class="attr-btn affinity-minus" aria-label="Diminuir afinidade com Alma">–</button>
+                        <span class="affinity-value">0</span>
+                        <button type="button" class="attr-btn affinity-plus" aria-label="Aumentar afinidade com Alma">+</button>
+                    </div>
+                </div>
+
+                <div class="affinity-item" data-element="mente">
+                    <img src="assets/elemento-mente.png" alt="Mente" class="affinity-icon">
+                    <span class="affinity-name">Mente</span>
+                    <div class="attribute-control">
+                        <button type="button" class="attr-btn affinity-minus" aria-label="Diminuir afinidade com Mente">–</button>
+                        <span class="affinity-value">0</span>
+                        <button type="button" class="attr-btn affinity-plus" aria-label="Aumentar afinidade com Mente">+</button>
+                    </div>
                 </div>
 
             </div>

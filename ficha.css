@@ -143,6 +143,53 @@
 .theme-swatch[data-theme="roxo"] { background: #9b3dc9; color: #9b3dc9; }
 .theme-swatch[data-theme="vermelho"] { background: #c0392b; color: #c0392b; }
 .theme-swatch[data-theme="laranja"] { background: #d97a3d; color: #d97a3d; }
+.theme-swatch[data-theme="branco"] { background: #f2f2f2; color: #f2f2f2; }
+
+.theme-custom-label {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    font-size: 11px;
+
+    text-transform: uppercase;
+    letter-spacing: 1px;
+
+    color: #777;
+
+    margin-left: 6px;
+
+    padding-left: 20px;
+
+    border-left: 1px solid #292929;
+}
+
+.theme-custom-label input[type="color"] {
+    width: 30px;
+    height: 30px;
+
+    padding: 0;
+
+    border: 2px solid #333;
+    border-radius: 50%;
+
+    background: none;
+
+    cursor: pointer;
+
+    overflow: hidden;
+}
+
+.theme-custom-label input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+.theme-custom-label input[type="color"]::-webkit-color-swatch {
+    border: none;
+    border-radius: 50%;
+}
 
 
 /* =========================================
@@ -1152,6 +1199,7 @@
 
 .ability-remove,
 .power-remove,
+.characteristic-remove,
 .equipment-remove {
     background: transparent;
 
@@ -1169,7 +1217,8 @@
 }
 
 .ability-remove,
-.power-remove {
+.power-remove,
+.characteristic-remove {
     position: absolute;
 
     top: 24px;
@@ -1206,6 +1255,7 @@
 
 .ability-remove:hover,
 .power-remove:hover,
+.characteristic-remove:hover,
 .equipment-remove:hover {
     border-color: var(--site-accent);
     color: var(--site-accent);
@@ -1220,6 +1270,213 @@
     padding: 15px 0;
 }
 
+
+/* =========================================
+   CARACTERÍSTICAS
+========================================= */
+
+.characteristics-list {
+    display: flex;
+    flex-direction: column;
+
+    gap: 15px;
+
+    margin-top: 25px;
+}
+
+.characteristic-card {
+    position: relative;
+
+    max-width: 100%;
+    min-width: 0;
+
+    padding: 26px;
+
+    border: 1px solid #222;
+    border-left: 4px solid var(--char-color, #333);
+
+    background: #0d0d0d;
+
+    overflow: hidden;
+
+    transition: border-color 0.3s;
+}
+
+.characteristic-header {
+    display: flex;
+
+    gap: 12px;
+
+    min-width: 0;
+
+    padding-right: 40px;
+
+    margin-bottom: 15px;
+}
+
+.characteristic-title {
+    flex: 1;
+    min-width: 0;
+
+    background: transparent;
+
+    border: none;
+    border-bottom: 1px solid #292929;
+
+    color: #eee;
+
+    font-family: "Cinzel", serif;
+    font-size: 19px;
+
+    padding: 4px 0 12px;
+}
+
+.characteristic-title:focus {
+    outline: none;
+    border-bottom-color: #555;
+}
+
+.characteristic-title::placeholder {
+    color: #555;
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+}
+
+.characteristic-type {
+    flex-shrink: 0;
+
+    width: 140px;
+
+    background: #090909;
+
+    border: 1px solid #292929;
+
+    color: var(--char-color, #eee);
+
+    padding: 8px 10px;
+
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
+
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.characteristic-type:focus {
+    outline: none;
+    border-color: #555;
+}
+
+.characteristic-desc {
+    display: block;
+
+    width: 100%;
+
+    background: transparent;
+
+    border: none;
+
+    color: #999;
+
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+
+    resize: vertical;
+
+    min-height: 70px;
+}
+
+.characteristic-desc:focus {
+    outline: none;
+}
+
+.characteristic-desc::placeholder {
+    color: #4a4a4a;
+}
+
+
+/* =========================================
+   AFINIDADES
+========================================= */
+
+.affinities-grid {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-areas:
+        "espaco realidade tempo"
+        ".      poder     ."
+        "transformacao alma mente";
+
+    gap: 30px;
+
+    max-width: 720px;
+
+    margin: 0 auto;
+}
+
+.affinity-item[data-element="espaco"] { grid-area: espaco; }
+.affinity-item[data-element="realidade"] { grid-area: realidade; }
+.affinity-item[data-element="tempo"] { grid-area: tempo; }
+.affinity-item[data-element="poder"] { grid-area: poder; }
+.affinity-item[data-element="transformacao"] { grid-area: transformacao; }
+.affinity-item[data-element="alma"] { grid-area: alma; }
+.affinity-item[data-element="mente"] { grid-area: mente; }
+
+.affinity-item {
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 20px 10px;
+}
+
+.affinity-item.affinity-center {
+    padding-top: 0;
+}
+
+.affinity-icon {
+    width: 84px;
+    height: 84px;
+
+    object-fit: contain;
+}
+
+.affinity-name {
+    font-family: "Cinzel", serif;
+
+    font-size: 15px;
+
+    color: #fff;
+
+    text-align: center;
+
+    letter-spacing: 1px;
+
+    transition: text-shadow 0.3s;
+}
+
+.affinity-item[data-element="realidade"] .affinity-name { --aff-color: #c0392b; }
+.affinity-item[data-element="tempo"] .affinity-name { --aff-color: #9b3dc9; }
+.affinity-item[data-element="transformacao"] .affinity-name { --aff-color: #d97a3d; }
+.affinity-item[data-element="poder"] .affinity-name { --aff-color: #d9c23d; }
+.affinity-item[data-element="mente"] .affinity-name { --aff-color: #3dbf6b; }
+.affinity-item[data-element="espaco"] .affinity-name { --aff-color: #1e5fd9; }
+.affinity-item[data-element="alma"] .affinity-name { --aff-color: #3dc7c9; }
+
+.affinity-value {
+    font-family: "Cinzel", serif;
+
+    font-size: 20px;
+
+    min-width: 30px;
+
+    text-align: center;
+}
 
 /* =========================================
    PODERES (cartão com cor do elemento)
@@ -1776,6 +2033,21 @@
         grid-template-columns: repeat(2, 1fr);
     }
 
+    .affinities-grid {
+        grid-template-columns: repeat(2, 1fr);
+
+        grid-template-areas:
+            "espaco realidade"
+            "tempo poder"
+            "transformacao alma"
+            "mente mente";
+    }
+
+    .affinity-icon {
+        width: 64px;
+        height: 64px;
+    }
+
     .block-header {
         flex-direction: column;
         align-items: start;
@@ -1809,6 +2081,19 @@
 
     .power-fields-grid {
         grid-template-columns: 1fr;
+    }
+
+    .affinities-grid {
+        grid-template-columns: 1fr;
+
+        grid-template-areas:
+            "espaco"
+            "realidade"
+            "tempo"
+            "poder"
+            "transformacao"
+            "alma"
+            "mente";
     }
 
     .roll-toast-container {
