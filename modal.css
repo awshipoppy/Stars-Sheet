@@ -1,0 +1,84 @@
+/* =========================================
+   MODAL.CSS — modal genérico compartilhado
+========================================= */
+/*
+   Usado pela ficha de personagem (picker de habilidades/poderes) e pelo
+   bestiário (ficha de ameaça). A variável --elemento-glow é opcional:
+   qualquer página pode setá-la via JS (element.style.setProperty) para
+   dar um brilho colorido ao modal; sem ela, fica neutro.
+*/
+
+.modal-overlay {
+    display: none;
+
+    position: fixed;
+    inset: 0;
+
+    background: rgba(5, 5, 5, 0.85);
+
+    z-index: 4000;
+
+    padding: 40px 5%;
+
+    overflow-y: auto;
+}
+
+.modal-overlay.is-open {
+    display: block;
+}
+
+.modal-sheet {
+    position: relative;
+
+    max-width: 900px;
+
+    margin: 0 auto;
+
+    background: color-mix(in srgb, var(--elemento-glow, #0a0a0a) 6%, #0a0a0a);
+
+    border: 1px solid #292929;
+    border-top: 3px solid var(--elemento-glow, #292929);
+
+    box-shadow: 0 0 70px 0 color-mix(in srgb, var(--elemento-glow, transparent) 30%, transparent), 0 25px 60px rgba(0, 0, 0, 0.6);
+
+    padding: 50px;
+
+    transition: box-shadow 0.4s ease, border-color 0.4s ease, background 0.4s ease;
+}
+
+.modal-close {
+    position: absolute;
+
+    top: 20px;
+    right: 20px;
+
+    width: 36px;
+    height: 36px;
+
+    background: transparent;
+
+    border: 1px solid #333;
+
+    color: #999;
+
+    font-size: 16px;
+
+    transition: 0.2s;
+}
+
+.modal-close:hover {
+    border-color: var(--site-accent);
+    color: var(--site-accent);
+}
+
+@media (max-width: 900px) {
+    .modal-sheet {
+        padding: 35px 25px;
+    }
+}
+
+@media (max-width: 600px) {
+    .modal-overlay {
+        padding: 20px 4%;
+    }
+}

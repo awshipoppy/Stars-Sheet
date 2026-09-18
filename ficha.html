@@ -13,6 +13,7 @@
 
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="ficha.css">
+    <link rel="stylesheet" href="modal.css">
 </head>
 
 <body>
@@ -31,7 +32,7 @@
             <a href="index.html#universo">Universo</a>
             <a href="index.html#regras">Regras</a>
             <a href="index.html#classes">Classes</a>
-            <a href="index.html#bestiario">Bestiário</a>
+            <a href="bestiario.html">Ameaças</a>
             <a href="index.html#itens">Itens</a>
         </nav>
 
@@ -368,7 +369,7 @@
                                 Expandir todas
                             </button>
                             <button type="button" class="secondary-button" id="add-ability">
-                                + Nova habilidade
+                                + Adicionar Habilidade
                             </button>
                             <button type="button" class="section-toggle" data-section-toggle="habilidades" aria-label="Minimizar Habilidades">▾</button>
                         </div>
@@ -394,7 +395,7 @@
                                 Expandir todas
                             </button>
                             <button type="button" class="secondary-button" id="add-power">
-                                + Novo poder
+                                + Adicionar Poder
                             </button>
                             <button type="button" class="section-toggle" data-section-toggle="poderes" aria-label="Minimizar Poderes">▾</button>
                         </div>
@@ -677,12 +678,25 @@
     </footer>
 
 
+    <!-- ================= MODAL — ADICIONAR HABILIDADE/PODER ================= -->
+
+    <div class="modal-overlay" id="efeito-modal-overlay">
+        <div class="modal-sheet" id="efeito-modal">
+            <button type="button" class="modal-close" id="efeito-modal-close" aria-label="Fechar">✕</button>
+            <div id="efeito-modal-content"></div>
+        </div>
+    </div>
+
+
     <!-- ================= POP-UPS DE ROLAGEM ================= -->
 
     <div class="roll-toast-container" id="roll-toast-container"></div>
 
 
     <script src="script.js"></script>
+    <script src="dice.js"></script>
+    <script src="elementos.js"></script>
+    <script src="habilidades-poderes-data.js"></script>
     <script src="ficha.js"></script>
 
 </body>

@@ -1,0 +1,644 @@
+/* =========================================
+   BESTIÁRIO — CABEÇALHO
+========================================= */
+
+.bestiario-hero .sheet-block-hint {
+    margin-bottom: 0;
+}
+
+.navbar nav a.nav-active {
+    color: var(--site-accent);
+}
+
+
+/* =========================================
+   BUSCA E FILTROS
+========================================= */
+
+.bestiario-controls-block {
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+
+.bestiario-search {
+    position: relative;
+
+    max-width: 600px;
+
+    margin-bottom: 25px;
+}
+
+.bestiario-search-icon {
+    position: absolute;
+
+    left: 18px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    font-size: 14px;
+
+    opacity: 0.6;
+
+    pointer-events: none;
+}
+
+.bestiario-search input {
+    width: 100%;
+
+    background: #0d0d0d;
+
+    border: 1px solid #292929;
+
+    color: #eee;
+
+    padding: 16px 18px 16px 44px;
+
+    font-family: "Inter", sans-serif;
+    font-size: 15px;
+
+    transition: border-color 0.3s;
+}
+
+.bestiario-search input:focus {
+    outline: none;
+    border-color: var(--site-accent);
+}
+
+.bestiario-search input::placeholder {
+    color: #555;
+}
+
+.filter-pills {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+
+    margin-bottom: 20px;
+}
+
+.filter-pill {
+    padding: 10px 20px;
+
+    background: transparent;
+
+    border: 1px solid #333;
+
+    color: #999;
+
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+
+    transition: 0.2s;
+}
+
+.filter-pill:hover {
+    border-color: #666;
+    color: #ccc;
+}
+
+.filter-pill.active {
+    background: var(--site-accent);
+    border-color: var(--site-accent);
+    color: #090909;
+}
+
+.bestiario-selects {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 25px;
+}
+
+.bestiario-selects label {
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
+
+    font-size: 11px;
+
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+
+    color: #777;
+}
+
+.bestiario-selects select {
+    min-width: 200px;
+
+    background: #0d0d0d;
+
+    border: 1px solid #292929;
+
+    color: #eee;
+
+    padding: 10px 12px;
+
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+}
+
+.bestiario-selects select:focus {
+    outline: none;
+    border-color: #555;
+}
+
+
+/* =========================================
+   LISTA DE AMEAÇAS (reaproveita .monster-grid / .monster-card / .danger / .monster-symbol de style.css)
+========================================= */
+
+.bestiario-list-block {
+    padding-top: 20px;
+}
+
+.monster-grid {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.ameaca-card {
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 14px;
+
+    cursor: default;
+}
+
+.ameaca-card-top {
+    display: flex;
+
+    align-items: center;
+
+    gap: 20px;
+
+    width: 100%;
+}
+
+.ameaca-symbol-img {
+    width: 34px;
+    height: 34px;
+
+    object-fit: contain;
+}
+
+.ameaca-card-title {
+    display: flex;
+    flex-direction: column;
+
+    gap: 4px;
+
+    min-width: 0;
+}
+
+.ameaca-card .danger {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    letter-spacing: 1.5px;
+}
+
+.ameaca-card-meta {
+    font-size: 11px;
+
+    color: #666;
+
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.ameaca-card-desc {
+    color: #888;
+
+    font-size: 13px;
+
+    line-height: 1.6;
+}
+
+.ameaca-card .ver-ficha-btn {
+    align-self: flex-start;
+
+    margin-top: 4px;
+}
+
+.empty-state.bestiario-empty {
+    display: none;
+
+    text-align: center;
+
+    padding: 60px 0;
+
+    font-size: 14px;
+}
+
+
+/* =========================================
+   MODAL — FICHA DA AMEAÇA
+========================================= */
+
+/* .modal-overlay / .modal-sheet / .modal-close agora moram em modal.css (compartilhado com a ficha) */
+
+.ameaca-sheet-header {
+    margin-bottom: 30px;
+
+    padding-right: 50px;
+}
+
+.ameaca-sheet-title {
+    display: flex;
+
+    align-items: center;
+
+    gap: 20px;
+
+    margin-bottom: 12px;
+}
+
+.ameaca-sheet-icon {
+    width: 56px;
+    height: 56px;
+
+    object-fit: contain;
+}
+
+.ameaca-sheet-title h2 {
+    font-family: "Cinzel", serif;
+
+    font-size: clamp(26px, 4vw, 36px);
+}
+
+.ameaca-sheet-tags {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+
+    margin-bottom: 18px;
+}
+
+.ameaca-tag {
+    padding: 5px 12px;
+
+    border: 1px solid #333;
+
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+
+    color: #aaa;
+}
+
+.ameaca-sheet-desc {
+    color: #999;
+
+    font-size: 14px;
+    line-height: 1.7;
+
+    max-width: 640px;
+}
+
+.ameaca-sheet-section {
+    margin-top: 35px;
+}
+
+.ameaca-sheet-section-title {
+    font-family: "Cinzel", serif;
+
+    font-size: 13px;
+
+    text-transform: uppercase;
+    letter-spacing: 2px;
+
+    color: #777;
+
+    margin-bottom: 18px;
+}
+
+.ameaca-status-grid {
+    display: grid;
+
+    grid-template-columns: 2fr 1fr;
+
+    gap: 20px;
+}
+
+.ameaca-text-fields-grid {
+    display: grid;
+
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    gap: 16px;
+
+    margin-top: 20px;
+}
+
+.ameaca-text-fields-grid label,
+.ameaca-senses-other {
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
+
+    font-size: 11px;
+
+    text-transform: uppercase;
+    letter-spacing: 1px;
+
+    color: #777;
+}
+
+.ameaca-text-field {
+    width: 100%;
+
+    background: #0d0d0d;
+
+    border: 1px solid #292929;
+
+    color: #eee;
+
+    padding: 10px 12px;
+
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+}
+
+.ameaca-text-field:focus {
+    outline: none;
+    border-color: var(--site-accent);
+}
+
+.ameaca-substats-grid {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 16px;
+
+    margin-top: 20px;
+}
+
+.ameaca-substats-grid .derived-stat {
+    flex: 1 1 140px;
+
+    padding: 18px 12px;
+}
+
+.ameaca-presenca-grid {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 16px;
+}
+
+.ameaca-presenca-grid .derived-stat {
+    flex: 1 1 160px;
+
+    padding: 18px 12px;
+}
+
+.ameaca-pericias-card {
+    margin-top: 16px;
+
+    padding: 18px 20px;
+
+    border: 1px solid #222;
+
+    background: #0d0d0d;
+}
+
+.ameaca-pericia-btn {
+    color: var(--site-accent);
+    border-color: color-mix(in srgb, var(--site-accent) 40%, #333);
+}
+
+.ameaca-tag-elemento {
+    font-weight: 600;
+}
+
+.ameaca-save-btn {
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.ameaca-save-btn:hover {
+    border-color: var(--site-accent);
+}
+
+.ameaca-substat-value {
+    font-size: 30px !important;
+}
+
+.ameaca-senses-card {
+    margin-top: 16px;
+
+    padding: 18px 20px;
+
+    border: 1px solid #222;
+
+    background: #0d0d0d;
+}
+
+.ameaca-senses-row {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+
+    margin: 14px 0;
+}
+
+.ameaca-sense-btn {
+    padding: 8px 16px;
+
+    background: transparent;
+
+    border: 1px solid #333;
+
+    color: #ccc;
+
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.ameaca-sense-btn:hover {
+    border-color: var(--site-accent);
+    color: var(--site-accent);
+}
+
+.ameaca-senses-other {
+    margin-top: 4px;
+}
+
+.ameaca-attributes-row {
+    display: grid;
+
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+
+    gap: 10px;
+
+    margin-top: 35px;
+}
+
+.ameaca-attributes-row .attribute-card {
+    min-width: 0;
+
+    cursor: default;
+}
+
+.ameaca-attributes-row .attribute-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ameaca-attacks-list,
+.ameaca-abilities-list {
+    display: flex;
+    flex-direction: column;
+
+    gap: 14px;
+
+    margin-top: 18px;
+}
+
+.attack-card {
+    padding: 20px 24px;
+
+    border: 1px solid #222;
+    border-left: 3px solid var(--site-accent);
+
+    background: #0d0d0d;
+}
+
+.attack-card-top {
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+
+    margin-bottom: 8px;
+}
+
+.attack-card h4 {
+    font-family: "Cinzel", serif;
+
+    font-size: 17px;
+}
+
+.attack-stats {
+    font-size: 12px;
+
+    color: #999;
+}
+
+.attack-card-desc {
+    color: #888;
+
+    font-size: 13px;
+
+    margin-bottom: 14px;
+}
+
+.attack-card-buttons {
+    display: flex;
+
+    gap: 10px;
+
+    flex-wrap: wrap;
+}
+
+.attack-card-buttons button {
+    padding: 9px 18px;
+
+    font-size: 11px;
+}
+
+.ameaca-sheet-actions {
+    display: flex;
+
+    justify-content: flex-end;
+
+    margin-top: 40px;
+
+    padding-top: 25px;
+
+    border-top: 1px solid #1c1c1c;
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 900px) {
+
+    .monster-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ameaca-status-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ameaca-attributes-row {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .ameaca-text-fields-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .modal-sheet {
+        padding: 35px 25px;
+    }
+}
+
+@media (max-width: 600px) {
+
+    .bestiario-selects {
+        flex-direction: column;
+
+        gap: 15px;
+    }
+
+    .bestiario-selects select {
+        min-width: 0;
+        width: 100%;
+    }
+
+    .ameaca-attributes-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .ameaca-text-fields-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-overlay {
+        padding: 20px 4%;
+    }
+
+    .attack-card-buttons button {
+        flex: 1;
+    }
+}

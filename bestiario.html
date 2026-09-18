@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Ameaças — Stars RPG</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="ficha.css">
+    <link rel="stylesheet" href="bestiario.css">
+    <link rel="stylesheet" href="modal.css">
+</head>
+
+<body>
+
+    <!-- ================= NAVBAR ================= -->
+
+    <header class="navbar">
+
+        <div class="logo">
+            <span class="logo-symbol">✦</span>
+            <span>STARS RPG</span>
+        </div>
+
+        <nav id="main-nav">
+            <a href="index.html#inicio">Início</a>
+            <a href="index.html#universo">Universo</a>
+            <a href="index.html#regras">Regras</a>
+            <a href="index.html#classes">Classes</a>
+            <a href="ficha.html">Ficha</a>
+            <a href="index.html#itens">Itens</a>
+        </nav>
+
+        <a href="index.html" class="character-button">
+            Voltar ao site
+        </a>
+
+        <button class="menu-button" onclick="toggleMenu()">
+            ☰
+        </button>
+
+    </header>
+
+
+    <main class="sheet-page bestiario-page">
+
+        <!-- ================= CABEÇALHO ================= -->
+
+        <section class="sheet-block bestiario-hero">
+
+            <p class="section-label">BESTIÁRIO</p>
+            <h2>Ameaças</h2>
+
+            <p class="sheet-block-hint">
+                Pesquise e filtre as ameaças do Stars RPG. Clique em "Ver ficha" para abrir os detalhes completos.
+            </p>
+
+        </section>
+
+
+        <!-- ================= BUSCA E FILTROS ================= -->
+
+        <section class="sheet-block bestiario-controls-block">
+
+            <div class="bestiario-search">
+                <span class="bestiario-search-icon">🔎</span>
+                <input type="text" id="ameaca-search" placeholder="Pesquisar ameaça por nome, elemento, categoria, tipo ou VD..." autocomplete="off">
+            </div>
+
+            <div class="filter-pills" id="categoria-filters">
+                <button type="button" class="filter-pill active" data-categoria="todos">Todos</button>
+                <button type="button" class="filter-pill" data-categoria="lacaio">Lacaio</button>
+                <button type="button" class="filter-pill" data-categoria="comum">Comum</button>
+                <button type="button" class="filter-pill" data-categoria="desafio">Desafio</button>
+                <button type="button" class="filter-pill" data-categoria="calamidade">Calamidade</button>
+            </div>
+
+            <div class="bestiario-selects">
+                <label>
+                    Elemento
+                    <select id="elemento-filter">
+                        <option value="todos">Todos</option>
+                    </select>
+                </label>
+
+                <label>
+                    VD
+                    <select id="vd-filter">
+                        <option value="todos">Todos</option>
+                    </select>
+                </label>
+            </div>
+
+        </section>
+
+
+        <!-- ================= LISTA ================= -->
+
+        <section class="sheet-block bestiario-list-block">
+
+            <div class="monster-grid" id="ameacas-grid"></div>
+
+            <p class="empty-state" id="ameacas-empty">Nenhuma ameaça encontrada com esses filtros.</p>
+
+        </section>
+
+    </main>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer>
+
+        <div class="footer-logo">
+            ✦ STARS RPG
+        </div>
+
+        <div class="footer-links">
+            <a href="index.html#inicio">Site</a>
+            <a href="ficha.html">Ficha</a>
+            <a href="#">Discord</a>
+        </div>
+
+        <p>
+            © 2026 Stars RPG. Todos os direitos reservados.
+        </p>
+
+    </footer>
+
+
+    <!-- ================= MODAL — FICHA DA AMEAÇA ================= -->
+
+    <div class="modal-overlay" id="ameaca-modal-overlay">
+        <div class="modal-sheet" id="ameaca-modal">
+            <button type="button" class="modal-close" id="ameaca-modal-close" aria-label="Fechar ficha">✕</button>
+            <div id="ameaca-modal-content"></div>
+        </div>
+    </div>
+
+
+    <!-- ================= POP-UPS DE ROLAGEM ================= -->
+
+    <div class="roll-toast-container" id="roll-toast-container"></div>
+
+
+    <script src="script.js"></script>
+    <script src="dice.js"></script>
+    <script src="elementos.js"></script>
+    <script src="ameacas-data.js"></script>
+    <script src="bestiario.js"></script>
+
+</body>
+</html>

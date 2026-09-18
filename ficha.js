@@ -34,16 +34,8 @@ const ATTRIBUTE_COLORS = {
     carisma: "#9b3dc9"
 };
 
-const ELEMENT_LABELS = {
-    alma: "Alma",
-    espaco: "Espaço",
-    mente: "Mente",
-    poder: "Poder",
-    realidade: "Realidade",
-    tempo: "Tempo",
-    transformacao: "Transformação",
-    primordial: "Primordial"
-};
+// ELEMENT_LABELS e getElementColor agora moram em elementos.js (compartilhado
+// com o bestiário de ameaças).
 
 // Fórmulas de PV / PP / Sanidade por classe, em NEX 5% (base) e o quanto
 // cada recurso aumenta a cada novo nível de NEX (10%, 15%, 20%...).
@@ -291,167 +283,21 @@ const extraInputs = {
 };
 
 const resetBtn = document.getElementById("reset-sheet");
+
+const efeitoModalOverlay = document.getElementById("efeito-modal-overlay");
+const efeitoModalContent = document.getElementById("efeito-modal-content");
+const efeitoModalClose = document.getElementById("efeito-modal-close");
 const exportBtn = document.getElementById("export-sheet");
 const importBtn = document.getElementById("import-sheet");
 const importFileInput = document.getElementById("import-file-input");
 
 
 // =========================================
-// ROLAGEM DE DADOS (1d10 + bônus) E POP-UP
+// ROLAGEM DE DADOS
 // =========================================
-
-function rollD10() {
-    return Math.floor(Math.random() * 10) + 1;
-}
-
-function performRoll(label, bonus) {
-    const die = rollD10();
-    const total = die + bonus;
-    showRollToast(label, die, bonus, total);
-}
-
-function showRollToast(label, die, bonus, total) {
-    const bonusText = bonus === 0 ? "" : (bonus > 0 ? ` + ${bonus}` : ` − ${Math.abs(bonus)}`);
-
-    mountToast(`
-        <div class="roll-toast-title">${escapeHtml(label)}</div>
-        <div class="roll-toast-dice">1d10: ${die}${escapeHtml(bonusText)}</div>
-        <div class="roll-toast-total">Total: <strong>${total}</strong></div>
-    `);
-}
-
-function mountToast(innerHtml, isError) {
-    const container = document.getElementById("roll-toast-container");
-    if (!container) return;
-
-    const toast = document.createElement("div");
-    toast.className = "roll-toast" + (isError ? " is-error" : "");
-    toast.innerHTML = innerHtml;
-
-    container.appendChild(toast);
-
-    requestAnimationFrame(() => toast.classList.add("show"));
-
-    setTimeout(() => {
-        toast.classList.remove("show");
-        toast.classList.add("hide");
-        setTimeout(() => toast.remove(), 350);
-    }, 10000);
-}
-
-
-// =========================================
-// ROLAGEM CUSTOMIZADA (NdM, NdM+K, NdMdX...)
-// =========================================
-
-// Aceita: "1d10", "1d12 + 5", "1d12-2", "3d8d2" (rola 3d8 e descarta os 2 piores)
-// Aceita expressões com vários termos somados/subtraídos, cada um sendo um
-// dado (NdM ou NdMdX, que descarta os X piores) ou um número fixo.
-// Ex: "1d8 + 1d10 + 2d4d1 + 5 - 2"
-function parseDiceExpression(raw) {
-    const normalized = String(raw).replace(/\s+/g, "");
-    if (!normalized) return null;
-
-    const termRegex = /([+-]?)(\d*d\d+(?:d\d+)?|\d+)/gi;
-    const terms = [];
-    let lastIndex = 0;
-    let match;
-
-    while ((match = termRegex.exec(normalized)) !== null) {
-        if (match.index !== lastIndex) return null; // caractere inesperado entre os termos
-        lastIndex = termRegex.lastIndex;
-
-        const sign = match[1] === "-" ? -1 : 1;
-        const parsedTerm = parseDiceTerm(match[2], sign);
-        if (!parsedTerm) return null;
-
-        terms.push(parsedTerm);
-    }
-
-    if (lastIndex !== normalized.length || terms.length === 0) return null;
-
-    return terms;
-}
-
-function parseDiceTerm(body, sign) {
-    const diceMatch = body.match(/^(\d*)d(\d+)(?:d(\d+))?$/i);
-
-    if (diceMatch) {
-        const count = diceMatch[1] ? parseInt(diceMatch[1], 10) : 1;
-        const sides = parseInt(diceMatch[2], 10);
-        const drop = diceMatch[3] ? parseInt(diceMatch[3], 10) : 0;
-
-        if (count < 1 || count > 100) return null;
-        if (sides < 2 || sides > 1000) return null;
-        if (drop < 0 || drop >= count) return null; // sempre precisa sobrar ao menos 1 dado
-
-        return { type: "dice", sign, count, sides, drop };
-    }
-
-    if (/^\d+$/.test(body)) {
-        return { type: "flat", sign, value: parseInt(body, 10) };
-    }
-
-    return null;
-}
-
-function rollCustomDice(raw) {
-    const notation = String(raw).trim();
-    const terms = parseDiceExpression(notation);
-
-    if (!terms) {
-        mountToast(`
-            <div class="roll-toast-title">Rolagem inválida</div>
-            <div class="roll-toast-error">"${escapeHtml(notation)}" não é uma notação reconhecida. Use algo como 1d10, 1d12 + 5 ou 1d8 + 2d4d1 - 2.</div>
-        `, true);
-        return;
-    }
-
-    let total = 0;
-    const pieces = [];
-
-    terms.forEach((term, index) => {
-        let piece;
-
-        if (term.type === "dice") {
-            const rolls = Array.from({ length: term.count }, () => Math.floor(Math.random() * term.sides) + 1);
-
-            const droppedSet = new Set(
-                rolls
-                    .map((v, i) => ({ v, i }))
-                    .sort((a, b) => a.v - b.v)
-                    .slice(0, term.drop)
-                    .map(x => x.i)
-            );
-
-            const kept = rolls.filter((v, i) => !droppedSet.has(i));
-            const sum = kept.reduce((a, b) => a + b, 0);
-            total += term.sign * sum;
-
-            const diceText = rolls
-                .map((v, i) => droppedSet.has(i) ? `<span class="die-dropped">${v}</span>` : v)
-                .join(", ");
-
-            const label = `${term.count}d${term.sides}${term.drop ? "d" + term.drop : ""}`;
-            piece = `${label}: [${diceText}]`;
-        } else {
-            total += term.sign * term.value;
-            piece = `${term.value}`;
-        }
-
-        const prefix = index === 0
-            ? (term.sign < 0 ? "− " : "")
-            : (term.sign < 0 ? " − " : " + ");
-
-        pieces.push(prefix + piece);
-    });
-
-    mountToast(`
-        <div class="roll-toast-title">${escapeHtml(notation)}</div>
-        <div class="roll-toast-dice">${pieces.join("")}</div>
-        <div class="roll-toast-total">Total: <strong>${total}</strong></div>
-    `);
-}
+// rollD10, performRoll, showRollToast, mountToast, parseDiceExpression,
+// parseDiceTerm e rollCustomDice agora moram em dice.js (compartilhado
+// com o bestiário de ameaças). Veja esse arquivo para os detalhes.
 
 
 // =========================================
@@ -777,33 +623,65 @@ function renderAbilities() {
 
     state.abilities.forEach((ability, index) => {
         const card = document.createElement("div");
-        card.className = "ability-card";
         card.dataset.index = index;
 
         const collapsed = !!ability.collapsed;
 
-        card.innerHTML = `
-            <div class="ability-header">
-                <input
-                    type="text"
-                    class="ability-title"
-                    placeholder="Nome da habilidade"
-                    value="${escapeHtml(ability.title || "")}"
-                >
-                <input
-                    type="text"
-                    class="ability-source"
-                    placeholder="Fonte"
-                    value="${escapeHtml(ability.source || "")}"
-                >
-            </div>
-            <textarea
-                class="ability-desc${collapsed ? " is-hidden" : ""}"
-                placeholder="Descreva o que essa habilidade faz..."
-            >${escapeHtml(ability.desc || "")}</textarea>
-            <button type="button" class="ability-toggle" aria-label="${collapsed ? "Mostrar" : "Ocultar"} descrição">${collapsed ? "▸" : "▾"}</button>
-            <button type="button" class="ability-remove" aria-label="Remover habilidade">✕</button>
-        `;
+        // Itens antigos (de antes deste sistema existir) não têm "origem" —
+        // continuam tratados como personalizados, sem perder nada.
+        if (ability.origem === "database") {
+            const dados = getEfeitoPorId(ability.habilidadeId);
+            card.className = "ability-card efeito-db-card";
+
+            if (!dados) {
+                card.innerHTML = `
+                    <p class="empty-state">Habilidade não encontrada no banco (id: ${escapeHtml(ability.habilidadeId || "?")}).</p>
+                    <button type="button" class="ability-remove" aria-label="Remover habilidade">✕</button>
+                `;
+            } else {
+                card.innerHTML = `
+                    <div class="ability-header">
+                        <div class="efeito-db-title">
+                            <span class="efeito-badge efeito-badge-sistema">Sistema</span>
+                            ${dados.isExample ? `<span class="efeito-badge efeito-badge-exemplo">Exemplo</span>` : ""}
+                            <h4>${escapeHtml(dados.nome)}</h4>
+                            <span class="efeito-db-meta">${escapeHtml(HABILIDADE_CATEGORIAS[dados.categoria] || dados.categoria)}</span>
+                        </div>
+                    </div>
+                    <p class="efeito-db-desc${collapsed ? " is-hidden" : ""}">${escapeHtml(dados.descricao || "")}</p>
+                    <p class="efeito-db-submeta${collapsed ? " is-hidden" : ""}">Requisitos: ${escapeHtml(dados.requisitos || "—")} · Custo: ${escapeHtml(dados.custo || "—")}</p>
+                    <label class="efeito-anotacao${collapsed ? " is-hidden" : ""}">Anotação pessoal
+                        <input type="text" class="ability-anotacao" placeholder="Ex: aprendi com o Mestre X" value="${escapeHtml(ability.anotacao || "")}">
+                    </label>
+                    <button type="button" class="ability-toggle" aria-label="${collapsed ? "Mostrar" : "Ocultar"} descrição">${collapsed ? "▸" : "▾"}</button>
+                    <button type="button" class="ability-remove" aria-label="Remover habilidade">✕</button>
+                `;
+            }
+        } else {
+            card.className = "ability-card";
+            card.innerHTML = `
+                <div class="ability-header">
+                    <input
+                        type="text"
+                        class="ability-title"
+                        placeholder="Nome da habilidade"
+                        value="${escapeHtml(ability.title || "")}"
+                    >
+                    <input
+                        type="text"
+                        class="ability-source"
+                        placeholder="Fonte"
+                        value="${escapeHtml(ability.source || "")}"
+                    >
+                </div>
+                <textarea
+                    class="ability-desc${collapsed ? " is-hidden" : ""}"
+                    placeholder="Descreva o que essa habilidade faz..."
+                >${escapeHtml(ability.desc || "")}</textarea>
+                <button type="button" class="ability-toggle" aria-label="${collapsed ? "Mostrar" : "Ocultar"} descrição">${collapsed ? "▸" : "▾"}</button>
+                <button type="button" class="ability-remove" aria-label="Remover habilidade">✕</button>
+            `;
+        }
 
         abilitiesList.appendChild(card);
     });
@@ -826,80 +704,107 @@ function renderPowers() {
     }
 
     state.powers.forEach((power, index) => {
-        const elementColor = power.element ? getElementColor(power.element) : "#333";
         const collapsed = !!power.collapsed;
-
         const card = document.createElement("div");
-        card.className = "power-card";
         card.dataset.index = index;
-        card.style.setProperty("--element-color", elementColor);
 
-        const stars = Array.from({ length: 7 }, (_, i) => {
-            const value = i + 1;
-            const filled = value <= (Number(power.stars) || 0);
-            return `<button type="button" class="power-star${filled ? " filled" : ""}" data-value="${value}" aria-label="Grau ${value}">★</button>`;
-        }).join("");
+        if (power.origem === "database") {
+            const dados = getEfeitoPorId(power.poderId);
+            const elementColor = dados ? getElementColor(dados.elemento) : "#333";
+            card.className = "power-card efeito-db-card";
+            card.style.setProperty("--element-color", elementColor);
 
-        card.innerHTML = `
-            <div class="power-header">
-                <input
-                    type="text"
-                    class="power-title"
-                    placeholder="Nome do poder"
-                    value="${escapeHtml(power.title || "")}"
-                >
-                <div class="power-stars">${stars}</div>
-            </div>
+            if (!dados) {
+                card.innerHTML = `
+                    <p class="empty-state">Poder não encontrado no banco (id: ${escapeHtml(power.poderId || "?")}).</p>
+                    <button type="button" class="power-remove" aria-label="Remover poder">✕</button>
+                `;
+            } else {
+                const stars = Array.from({ length: 7 }, (_, i) => {
+                    const value = i + 1;
+                    const filled = value <= (Number(power.stars) || 0);
+                    return `<button type="button" class="power-star${filled ? " filled" : ""}" data-value="${value}" aria-label="Grau ${value}">★</button>`;
+                }).join("");
 
-            <div class="power-fields-grid${collapsed ? " is-hidden" : ""}">
-                <label>Elemento
-                    <select class="power-element" data-element="${power.element || ""}">
-                        <option value="">Selecione</option>
-                        ${Object.entries(ELEMENT_LABELS).map(([key, label]) =>
-                            `<option value="${key}" ${power.element === key ? "selected" : ""}>${label}</option>`
-                        ).join("")}
-                    </select>
-                </label>
-                <label>Execução
-                    <input type="text" class="power-execucao" value="${escapeHtml(power.execucao || "")}">
-                </label>
-                <label>Alcance
-                    <input type="text" class="power-alcance" value="${escapeHtml(power.alcance || "")}">
-                </label>
-                <label>Alvo ou Área
-                    <input type="text" class="power-alvo" value="${escapeHtml(power.alvo || "")}">
-                </label>
-                <label>Duração
-                    <input type="text" class="power-duracao" value="${escapeHtml(power.duracao || "")}">
-                </label>
-                <label>Resistência
-                    <input type="text" class="power-resistencia" value="${escapeHtml(power.resistencia || "")}">
-                </label>
-            </div>
+                card.innerHTML = `
+                    <div class="power-header">
+                        <div class="efeito-db-title">
+                            <span class="efeito-badge efeito-badge-sistema">Sistema</span>
+                            ${dados.isExample ? `<span class="efeito-badge efeito-badge-exemplo">Exemplo</span>` : ""}
+                            <h4>${escapeHtml(dados.nome)}</h4>
+                            <span class="efeito-db-meta">${escapeHtml(ELEMENT_LABELS[dados.elemento] || dados.elemento)}</span>
+                        </div>
+                        <div class="power-stars">${stars}</div>
+                    </div>
+                    <p class="efeito-db-desc${collapsed ? " is-hidden" : ""}">${escapeHtml(dados.descricao || "")}</p>
+                    <p class="efeito-db-submeta${collapsed ? " is-hidden" : ""}">Requisitos: ${escapeHtml(dados.requisitos || "—")} · Custo: ${escapeHtml(dados.custo || "—")}</p>
+                    <label class="efeito-anotacao${collapsed ? " is-hidden" : ""}">Anotação pessoal
+                        <input type="text" class="power-anotacao" placeholder="Ex: aprendi com o Mestre X" value="${escapeHtml(power.anotacao || "")}">
+                    </label>
+                    <button type="button" class="power-toggle" aria-label="${collapsed ? "Mostrar" : "Ocultar"} descrição">${collapsed ? "▸" : "▾"}</button>
+                    <button type="button" class="power-remove" aria-label="Remover poder">✕</button>
+                `;
+            }
+        } else {
+            const elementColor = power.element ? getElementColor(power.element) : "#333";
+            card.className = "power-card";
+            card.style.setProperty("--element-color", elementColor);
 
-            <textarea class="power-desc${collapsed ? " is-hidden" : ""}" placeholder="Descrição do poder...">${escapeHtml(power.desc || "")}</textarea>
+            const stars = Array.from({ length: 7 }, (_, i) => {
+                const value = i + 1;
+                const filled = value <= (Number(power.stars) || 0);
+                return `<button type="button" class="power-star${filled ? " filled" : ""}" data-value="${value}" aria-label="Grau ${value}">★</button>`;
+            }).join("");
 
-            <button type="button" class="power-toggle" aria-label="${collapsed ? "Mostrar" : "Ocultar"} descrição">${collapsed ? "▸" : "▾"}</button>
-            <button type="button" class="power-remove" aria-label="Remover poder">✕</button>
-        `;
+            card.innerHTML = `
+                <div class="power-header">
+                    <input
+                        type="text"
+                        class="power-title"
+                        placeholder="Nome do poder"
+                        value="${escapeHtml(power.title || "")}"
+                    >
+                    <div class="power-stars">${stars}</div>
+                </div>
+
+                <div class="power-fields-grid${collapsed ? " is-hidden" : ""}">
+                    <label>Elemento
+                        <select class="power-element" data-element="${power.element || ""}">
+                            <option value="">Selecione</option>
+                            ${Object.entries(ELEMENT_LABELS).map(([key, label]) =>
+                                `<option value="${key}" ${power.element === key ? "selected" : ""}>${label}</option>`
+                            ).join("")}
+                        </select>
+                    </label>
+                    <label>Execução
+                        <input type="text" class="power-execucao" value="${escapeHtml(power.execucao || "")}">
+                    </label>
+                    <label>Alcance
+                        <input type="text" class="power-alcance" value="${escapeHtml(power.alcance || "")}">
+                    </label>
+                    <label>Alvo ou Área
+                        <input type="text" class="power-alvo" value="${escapeHtml(power.alvo || "")}">
+                    </label>
+                    <label>Duração
+                        <input type="text" class="power-duracao" value="${escapeHtml(power.duracao || "")}">
+                    </label>
+                    <label>Resistência
+                        <input type="text" class="power-resistencia" value="${escapeHtml(power.resistencia || "")}">
+                    </label>
+                </div>
+
+                <textarea class="power-desc${collapsed ? " is-hidden" : ""}" placeholder="Descrição do poder...">${escapeHtml(power.desc || "")}</textarea>
+
+                <button type="button" class="power-toggle" aria-label="${collapsed ? "Mostrar" : "Ocultar"} descrição">${collapsed ? "▸" : "▾"}</button>
+                <button type="button" class="power-remove" aria-label="Remover poder">✕</button>
+            `;
+        }
 
         powersList.appendChild(card);
     });
 }
 
-function getElementColor(key) {
-    const map = {
-        alma: "#3dc7c9",
-        espaco: "#1e5fd9",
-        mente: "#3dbf6b",
-        poder: "#d9c23d",
-        realidade: "#c0392b",
-        tempo: "#9b3dc9",
-        transformacao: "#d97a3d",
-        primordial: "#eeeeee"
-    };
-    return map[key] || "#333333";
-}
+// getElementColor agora mora em elementos.js (compartilhado)
 
 
 // =========================================
@@ -1100,12 +1005,7 @@ document.querySelectorAll("[data-section-toggle]").forEach(btn => {
 // =========================================
 // UTIL
 // =========================================
-
-function escapeHtml(str) {
-    const div = document.createElement("div");
-    div.textContent = str;
-    return div.innerHTML;
-}
+// escapeHtml agora mora em dice.js (compartilhado)
 
 
 // =========================================
@@ -1375,13 +1275,7 @@ skillsList.addEventListener("click", (e) => {
 // =========================================
 
 addAbilityBtn.addEventListener("click", () => {
-    state.abilities.push({ title: "", source: "", desc: "", collapsed: false });
-    saveState();
-    renderAbilities();
-
-    const cards = abilitiesList.querySelectorAll(".ability-card");
-    const last = cards[cards.length - 1];
-    if (last) last.querySelector(".ability-title").focus();
+    openEfeitoPicker("habilidade");
 });
 
 document.getElementById("collapse-all-abilities").addEventListener("click", () => {
@@ -1409,6 +1303,8 @@ abilitiesList.addEventListener("input", (e) => {
         state.abilities[index].source = e.target.value;
     } else if (e.target.classList.contains("ability-desc")) {
         state.abilities[index].desc = e.target.value;
+    } else if (e.target.classList.contains("ability-anotacao")) {
+        state.abilities[index].anotacao = e.target.value;
     }
 
     saveState();
@@ -1443,17 +1339,7 @@ abilitiesList.addEventListener("click", (e) => {
 // =========================================
 
 addPowerBtn.addEventListener("click", () => {
-    state.powers.push({
-        title: "", stars: 0, element: "",
-        execucao: "", alcance: "", alvo: "", duracao: "", resistencia: "",
-        desc: "", collapsed: false
-    });
-    saveState();
-    renderPowers();
-
-    const cards = powersList.querySelectorAll(".power-card");
-    const last = cards[cards.length - 1];
-    if (last) last.querySelector(".power-title").focus();
+    openEfeitoPicker("poder");
 });
 
 document.getElementById("collapse-all-powers").addEventListener("click", () => {
@@ -1491,6 +1377,11 @@ powersList.addEventListener("input", (e) => {
             saveState();
             return;
         }
+    }
+
+    if (e.target.classList.contains("power-anotacao")) {
+        state.powers[index].anotacao = e.target.value;
+        saveState();
     }
 });
 
@@ -1720,6 +1611,286 @@ diceCustomInput.addEventListener("keydown", (e) => {
     if (e.key !== "Enter") return;
     if (!diceCustomInput.value.trim()) return;
     rollCustomDice(diceCustomInput.value);
+});
+
+
+// =========================================
+// SELETOR DE HABILIDADE/PODER (banco de dados)
+// =========================================
+//
+// A ficha nunca copia os dados do banco pra dentro dela: guarda só
+// {origem:"database", habilidadeId/poderId, anotacao}. Os dados
+// completos (nome, descrição, custo...) são sempre lidos de
+// habilidades-poderes-data.js na hora de renderizar.
+
+const pickerState = { tipo: "habilidade", termo: "", filtro: "todos", view: "lista" };
+
+function abrirEfeitoModal() {
+    efeitoModalOverlay.classList.add("is-open");
+    document.body.style.overflow = "hidden";
+}
+
+function fecharEfeitoModal() {
+    efeitoModalOverlay.classList.remove("is-open");
+    document.body.style.overflow = "";
+}
+
+function openEfeitoPicker(tipo) {
+    pickerState.tipo = tipo;
+    pickerState.termo = "";
+    pickerState.filtro = "todos";
+    pickerState.view = "lista";
+    renderEfeitoModal();
+    abrirEfeitoModal();
+}
+
+function getEfeitoDb() {
+    return pickerState.tipo === "habilidade" ? HABILIDADES_DB : PODERES_DB;
+}
+
+function getEfeitosFiltrados() {
+    const termo = pickerState.termo.trim().toLowerCase();
+
+    return getEfeitoDb().filter(item => {
+        if (pickerState.filtro !== "todos") {
+            const chaveFiltro = pickerState.tipo === "habilidade" ? item.categoria : item.elemento;
+            if (chaveFiltro !== pickerState.filtro) return false;
+        }
+
+        if (termo) {
+            const rotulo = pickerState.tipo === "habilidade"
+                ? (HABILIDADE_CATEGORIAS[item.categoria] || "")
+                : (ELEMENT_LABELS[item.elemento] || "");
+
+            const alvo = [item.nome, item.descricao, rotulo].join(" ").toLowerCase();
+            if (!alvo.includes(termo)) return false;
+        }
+
+        return true;
+    });
+}
+
+function renderEfeitoModal() {
+    if (pickerState.view === "preview") {
+        renderEfeitoPreview();
+    } else if (pickerState.view === "criar") {
+        renderEfeitoCriar();
+    } else {
+        renderEfeitoLista();
+    }
+}
+
+function renderEfeitoLista() {
+    const tipo = pickerState.tipo;
+    const titulo = tipo === "habilidade" ? "Adicionar Habilidade" : "Adicionar Poder";
+
+    const filtroOptions = tipo === "habilidade"
+        ? Object.entries(HABILIDADE_CATEGORIAS)
+        : Object.entries(ELEMENT_LABELS).filter(([key]) => key !== "primordial");
+
+    const filtroLabel = tipo === "habilidade" ? "Categoria" : "Elemento";
+
+    const itens = getEfeitosFiltrados();
+
+    // agrupa por categoria (habilidade) ou elemento (poder)
+    const grupos = {};
+    itens.forEach(item => {
+        const chave = tipo === "habilidade" ? item.categoria : item.elemento;
+        if (!grupos[chave]) grupos[chave] = [];
+        grupos[chave].push(item);
+    });
+
+    const gruposHtml = Object.keys(grupos).length === 0
+        ? `<p class="empty-state">Nenhum item encontrado com esses filtros.</p>`
+        : Object.entries(grupos).map(([chave, lista]) => `
+            <div class="efeito-grupo">
+                <p class="efeito-grupo-titulo">${escapeHtml(tipo === "habilidade" ? (HABILIDADE_CATEGORIAS[chave] || chave) : (ELEMENT_LABELS[chave] || chave))}</p>
+                <div class="efeito-picker-list">
+                    ${lista.map(item => `
+                        <button type="button" class="efeito-picker-item" data-id="${item.id}">
+                            <span>${escapeHtml(item.nome)}</span>
+                            ${item.isExample ? `<span class="efeito-badge efeito-badge-exemplo">Exemplo</span>` : ""}
+                        </button>
+                    `).join("")}
+                </div>
+            </div>
+        `).join("");
+
+    efeitoModalContent.innerHTML = `
+        <p class="section-label">${tipo === "habilidade" ? "HABILIDADES" : "PODERES"}</p>
+        <h2 style="font-family:'Cinzel',serif; font-size:28px; margin-bottom:25px;">${titulo}</h2>
+
+        <div class="efeito-picker-controls">
+            <input type="text" id="efeito-search" class="efeito-search-input" placeholder="Pesquisar por nome ou descrição..." value="${escapeHtml(pickerState.termo)}">
+
+            <select id="efeito-filtro">
+                <option value="todos">${filtroLabel}: Todos</option>
+                ${filtroOptions.map(([key, label]) => `<option value="${key}" ${pickerState.filtro === key ? "selected" : ""}>${escapeHtml(label)}</option>`).join("")}
+            </select>
+        </div>
+
+        <div class="efeito-picker-groups">
+            ${gruposHtml}
+        </div>
+
+        <div class="efeito-picker-footer">
+            <button type="button" class="secondary-button" id="efeito-criar-btn">
+                + Criar ${tipo === "habilidade" ? "habilidade" : "poder"} personalizado
+            </button>
+        </div>
+    `;
+
+    document.getElementById("efeito-search").addEventListener("input", (e) => {
+        pickerState.termo = e.target.value;
+        renderEfeitoLista();
+    });
+    document.getElementById("efeito-search").focus();
+    // devolve o cursor pro fim do texto já digitado
+    const searchEl = document.getElementById("efeito-search");
+    searchEl.setSelectionRange(searchEl.value.length, searchEl.value.length);
+
+    document.getElementById("efeito-filtro").addEventListener("change", (e) => {
+        pickerState.filtro = e.target.value;
+        renderEfeitoLista();
+    });
+
+    efeitoModalContent.querySelectorAll(".efeito-picker-item").forEach(btn => {
+        btn.addEventListener("click", () => {
+            pickerState.view = "preview";
+            pickerState.previewId = btn.dataset.id;
+            renderEfeitoModal();
+        });
+    });
+
+    document.getElementById("efeito-criar-btn").addEventListener("click", () => {
+        pickerState.view = "criar";
+        renderEfeitoModal();
+    });
+}
+
+function renderEfeitoPreview() {
+    const item = getEfeitoPorId(pickerState.previewId);
+    const tipo = pickerState.tipo;
+
+    if (!item) {
+        pickerState.view = "lista";
+        renderEfeitoModal();
+        return;
+    }
+
+    const rotulo = tipo === "habilidade"
+        ? (HABILIDADE_CATEGORIAS[item.categoria] || item.categoria)
+        : (ELEMENT_LABELS[item.elemento] || item.elemento);
+
+    efeitoModalContent.innerHTML = `
+        <button type="button" class="ghost-button" id="efeito-voltar-btn" style="margin-bottom:25px;">← Voltar</button>
+
+        <div class="efeito-preview">
+            <div class="efeito-db-title" style="margin-bottom:10px;">
+                <span class="efeito-badge efeito-badge-sistema">Sistema</span>
+                ${item.isExample ? `<span class="efeito-badge efeito-badge-exemplo">Exemplo</span>` : ""}
+            </div>
+            <h2 style="font-family:'Cinzel',serif; font-size:26px; margin-bottom:6px;">${escapeHtml(item.nome)}</h2>
+            <p class="efeito-db-meta" style="margin-bottom:20px;">${escapeHtml(rotulo)}</p>
+
+            <p style="color:#bbb; font-size:14px; line-height:1.7; margin-bottom:18px;">${escapeHtml(item.descricao || "")}</p>
+            <p class="efeito-db-submeta">Requisitos: ${escapeHtml(item.requisitos || "—")} · Custo: ${escapeHtml(item.custo || "—")}</p>
+        </div>
+
+        <div class="efeito-picker-footer">
+            <button type="button" class="primary-button" id="efeito-adicionar-btn">Adicionar à ficha</button>
+        </div>
+    `;
+
+    document.getElementById("efeito-voltar-btn").addEventListener("click", () => {
+        pickerState.view = "lista";
+        renderEfeitoModal();
+    });
+
+    document.getElementById("efeito-adicionar-btn").addEventListener("click", () => {
+        if (tipo === "habilidade") {
+            state.abilities.push({ origem: "database", habilidadeId: item.id, anotacao: "", collapsed: false });
+            saveState();
+            renderAbilities();
+        } else {
+            state.powers.push({ origem: "database", poderId: item.id, stars: 0, anotacao: "", collapsed: false });
+            saveState();
+            renderPowers();
+        }
+        fecharEfeitoModal();
+    });
+}
+
+function renderEfeitoCriar() {
+    const tipo = pickerState.tipo;
+
+    efeitoModalContent.innerHTML = `
+        <button type="button" class="ghost-button" id="efeito-voltar-btn" style="margin-bottom:25px;">← Voltar</button>
+
+        <p class="section-label">${tipo === "habilidade" ? "HABILIDADE" : "PODER"} PERSONALIZADA</p>
+        <h2 style="font-family:'Cinzel',serif; font-size:26px; margin-bottom:15px;">Criar ${tipo === "habilidade" ? "habilidade" : "poder"} personalizado</h2>
+
+        <p class="sheet-block-hint" style="margin-bottom:20px;">
+            Só o nome é obrigatório aqui — depois de criar, o card já aparece na ficha pronto pra você preencher descrição${tipo === "poder" ? ", elemento, execução e o resto" : " e fonte"} direto ali.
+        </p>
+
+        <label class="field-group" style="max-width:none; margin-bottom:25px;">
+            <span style="font-size:11px; text-transform:uppercase; letter-spacing:2px; color:#777;">Nome</span>
+            <input type="text" id="efeito-custom-nome" placeholder="Nome ${tipo === "habilidade" ? "da habilidade" : "do poder"}">
+        </label>
+
+        <div class="efeito-picker-footer">
+            <button type="button" class="primary-button" id="efeito-custom-adicionar-btn">Adicionar à ficha</button>
+        </div>
+    `;
+
+    document.getElementById("efeito-voltar-btn").addEventListener("click", () => {
+        pickerState.view = "lista";
+        renderEfeitoModal();
+    });
+
+    const nomeInput = document.getElementById("efeito-custom-nome");
+    nomeInput.focus();
+
+    function confirmarCriacao() {
+        const nome = nomeInput.value.trim();
+        if (!nome) {
+            nomeInput.focus();
+            return;
+        }
+
+        if (tipo === "habilidade") {
+            state.abilities.push({ title: nome, source: "", desc: "", collapsed: false });
+            saveState();
+            renderAbilities();
+        } else {
+            state.powers.push({
+                title: nome, stars: 0, element: "",
+                execucao: "", alcance: "", alvo: "", duracao: "", resistencia: "",
+                desc: "", collapsed: false
+            });
+            saveState();
+            renderPowers();
+        }
+        fecharEfeitoModal();
+    }
+
+    document.getElementById("efeito-custom-adicionar-btn").addEventListener("click", confirmarCriacao);
+    nomeInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") confirmarCriacao();
+    });
+}
+
+efeitoModalClose.addEventListener("click", fecharEfeitoModal);
+
+efeitoModalOverlay.addEventListener("click", (e) => {
+    if (e.target === efeitoModalOverlay) fecharEfeitoModal();
+});
+
+document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && efeitoModalOverlay.classList.contains("is-open")) {
+        fecharEfeitoModal();
+    }
 });
 
 
