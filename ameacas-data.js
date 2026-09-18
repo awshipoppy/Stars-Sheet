@@ -496,6 +496,91 @@ const AMEACAS = [
             }
         ]
     },
+    //Entulhobo
+    {
+        id: "entulhobo",
+        nome: "Entulhobo",
+        vd: 220,
+        categoria: "desafio",
+        elemento: "tempo",
+        presencaCaotica: {dt: 11, danoMental: "8d6", nexIgnorar: 65},
+        elementosComplementares: ["realidade"],
+        tipo: "Anomalia",
+        tamanho: "Enorme",
+        descricao: "Em meio a apartamentos antigos em áreas suburbanas e a grandes construções, este ser surge. Com uma aparência que tenta se assemelhar a um enorme lobo, com cerca de 5 metros de altura, ele age durante as noites, vagando pelos subúrbios de metrópoles, buscando por aqueles que tenham algo de extrema importância para perder. Normalmente, tais objetos são casas, carros ou presentes de familiares.",
+        pv: 500,
+        defesa: 16,
+        deslocamento: "9m - 6q",
+        resistencias: "Físico 10 e Tempo 20",
+        testesResistencia: { fortitude: 10, reflexos: 5, vontade: 1 },
+        sentidos: { iniciativa: 8, percepcao: 5},
+        pericias: [
+            {nome: "Atletismo", bonus:10},
+            {nome: "Enganação", bonus:6},
+            {nome: "Furtividade", bonus:8},
+            {nome: "Intimidação", bonus:2},
+            {nome: "Tática", bonus:3}
+        ],
+        atributos: {forca: 6,
+            destreza: 4,
+            constituicao: 4,
+            poder: 3,
+            inteligencia: 0,
+            sabedoria: 2,
+            carisma: 3
+        },
+        acoes: [
+            {
+                nome: "PADRÃO - Mordida Betoneira X2",
+                bonus: 16,
+                dano: "4d12+10",
+                descricao: "Dano de Perfuração"
+            },
+            {
+                nome: "PADRÃO - Garras de Tralha X2",
+                bonus: 18,
+                dano: "4d10+5",
+                descricao: "Dano de Corte"
+            },
+            {
+                nome: "LIVRE - Patas Ágeis",
+                bonus: 19,
+                descricao: "Uma vez por rodada, quando o Entulhobo acertar pelo menos dois de seus ataques em um mesmo alvo, ele pode fazer uma manobra contra este ser como uma ação livre (+19). Caso o agarre, o alvo ficará na boca do Entulhobo, ficando além de agarrado, enjoado. O Entulhobo, enquanto estiver agarrando um alvo dessa forma, só pode fazer sua Mordida Betoneira no alvo agarrado."
+            },
+            {
+                nome: "LIVRE - Pele de Cimento",
+                descricao: "Caso um objeto esteja caído ao lado do Entulhobo, ele pode com uma de suas muitas mãos, agarrar o objeto e prendê-lo à sua pele de cimento. Remover tal objeto requer uma ação padrão e um teste de Atletismo (DT 15). Se o Entulhobo cair em cima de um ser de tamanho médio ou menor, ele ficará preso neste pela, ficando agarrado (removê-lo funciona da mesma forma que remover um item)."
+            },
+            {
+                nome: "MOVIMENTO - Emaranhado de Fios",
+                dano: "4d6",
+                descricao: "– Para simular uma cauda, o Entulhobo possui um grande emaranhado de fios que pode utilizar como uma arma. Uma vez por rodada, é possível utilizá-lo para atingir um alvo em alcance curto. O alvo irá sofrer 4d6 de dano de eletricidade e ficar paralisado por 1 rodada (Reflexos DT 11 evita)."
+            },
+            {
+                nome: "PADRÃO - Asfaltamento Gástrico",
+                dano: "2d12",
+                descricao: "Como recurso um tanto desesperado, o Entulhobo é capaz de vomitar parte de seu cimento para se defender. Ele irá contar como se tivesse a habilidade Acumulador de Memórias duas vezes a menos. Seres em um cone de 6m irão sofrer 2d12 de dano de Impacto e ficara Enredados (Fortitude DT 11). Um ser que falhe neste teste por 3 pontos ou mais irá ficar petrificado. Caso tenha um ser dentro da boca do Entulhobo, ele será regurgitando em conjunto com o cimento, sendo consumido por ele, falhando automaticamente, ficando Petrificado"
+            },
+            {
+                nome: "COMPLETA - NINHO SUBTERRÂNEO",
+                descricao: "Em situações nas quais acredita que irá perder seu bem mais precioso (sua vida), o Entulhobo decide por fugir, fazendo o máximo para se manter longe das pessoas. Para isso, ele retorna para o subterrâneo deixando para trás toda sua tralha. Ao fazer isso, qualquer aumento de estatísticas pela habilidade Acumulador de Memórias é perdido e ele adentra o solo, ficando até 15m abaixo da terra. Nesta área, ele irá receber Cura Acelerada 20, mas perderá toda sua RD e ficará a todo momento desprevenido."
+            },
+            {
+                nome: "UMA AÇÃO INJUSTA",
+                descricao: "Uma vez por rodada, o Entulhobo pode usar Mordida Betoneira ou Garras de Tralha como uma ação injusta."
+            }
+        ],
+        habilidades: [
+            {
+                nome:"ACUMULADOR DE MEMÓRIAS",
+                descricao: "Ao destruir algo importante para uma pessoa (como a arma favorita de um duelista ou um item elemental de um individualista), o Entulhobo se revigora, recuperando 2d20 PV e se tornando momentaneamente mais grudento, como se o cimento em seu corpo se aquecesse. Caso isso ocorra, ele irá adicionar mais tralha ao seu corpo, ficando um pouco maior e mais pesado. O Entulhobo receberá +2 em RD e rolagens de dano, mas terá seu deslocamento reduzido em 1,5m. A cada 2 vezes que faz isso, a Defesa e Destreza do Entulhobo são diminuídas em 1. Além disso, ao fazer isso 5 vezes, a camada entulho no corpo da anomalia será tão densa que se tornará difícil de acertá-la, todo ataque corpo a corpo realizado contra ela irá causar 1d12 de dano Perfurante em quem atacou."
+            },
+            {
+                nome:"TRALHA PROTETIVA",
+                descricao: "O entulho presente no Entulhobo o protege em algumas situações complicadas. Três vezes por cena, quando realiza um teste de resistência, pode escolher elevar o teste em um nível, porém perde 10 PV."
+            }
+        ]
+    },
     //Espectro
     {
         id: "espectro",
@@ -620,7 +705,7 @@ const AMEACAS = [
         vd: 280,
         categoria: "desafio",
         elemento: "realidade",
-        elementosComplementares: "espaco",
+        elementosComplementares: ["espaco"],
         tipo: "Anomalia",
         tamanho: "Grande",
         presencaCaotica: {dt: 14, danoMental: "9d6", nexIgnorar: 80},
@@ -648,7 +733,7 @@ const AMEACAS = [
                 nome: "PADRÃO - Chifres X3",
                 bonus: 19,
                 dano: "4d6+25",
-                descricao: "Dano Perfurante"
+                descricao: "Dano de Perfuração"
             },
             {
                 nome: "PADRÃO - Machado X2",
@@ -672,16 +757,14 @@ const AMEACAS = [
                 descricao: "Uma vez por cena, o Minotauro cria uma poça de sangue misturada com fragmentos de Gemma em algum espaço adjacente e então, atravessa por ele. Ele então, é teletransportado para algum ponto em alcance Longo."
             },
             {
-                nome: "PADRÃO - ",
-                bonus: 5,
-                dano: "",
-                descricao: ""
+                nome: "COMPLETA - Investida do Minotauro",
+                bonus: 21,
+                dano: "4d8+8",
+                descricao: "O Minotauro faz uma investida em linha reta que acerta o primeiro alvo e pega os que estão de trás. Todo tem que fazer um teste de reflexos (DT 12) ou tomar 4d8+8 de dano de impacto e o primeiro alvo faz um teste de luta contra o Minotauro, se falhar, ele fica agarrado e o Minotauro realiza um ataque de chifres contra ele."
             },
             {
-                nome: "PADRÃO - ",
-                bonus: 5,
-                dano: "",
-                descricao: ""
+                nome: "UMA AÇÃO INJUSTA",
+                descricao: "Uma vez por rodada, o minotauro pode utilizar Machado no final do turno de outro ser como sua ação injusta."
             }
         ],
         habilidades: [
@@ -1002,6 +1085,7 @@ const AMEACAS = [
         vd: 20,
         categoria: "",
         elemento: "",
+        elementosComplementares: [""],
         tipo: "",
         tamanho: "",
         descricao: "",
