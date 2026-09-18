@@ -143,7 +143,7 @@ function getFiltered() {
 // =========================================
 
 function elementoIconSrc(key) {
-    if (key === "primordial") return null;
+    if (key === "primordial" || key === "nenhum") return null;
     return `assets/elemento-${key}.png`;
 }
 

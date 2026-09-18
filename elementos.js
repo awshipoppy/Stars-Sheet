@@ -13,7 +13,8 @@ const ELEMENT_LABELS = {
     realidade: "Realidade",
     tempo: "Tempo",
     transformacao: "Transformação",
-    primordial: "Primordial"
+    primordial: "Primordial",
+    nenhum: "Nenhum"
 };
 
 const ELEMENT_COLORS = {
@@ -22,9 +23,11 @@ const ELEMENT_COLORS = {
     mente: "#3dbf6b",
     poder: "#d9c23d",
     realidade: "#c0392b",
-    tempo: "#9b3dc9",
+    tempo: "#4c0072",
     transformacao: "#d97a3d",
-    primordial: "#eeeeee"
+    primordial: "#eeeeee",
+    nenhum: "#2b2626",
+    soberano: "#b9e8ea"
 };
 
 function getElementColor(key) {

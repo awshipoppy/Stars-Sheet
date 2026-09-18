@@ -53,7 +53,7 @@ function mountToast(innerHtml, isError) {
         toast.classList.remove("show");
         toast.classList.add("hide");
         setTimeout(() => toast.remove(), 350);
-    }, 10000);
+    }, 7500);
 }
 
 

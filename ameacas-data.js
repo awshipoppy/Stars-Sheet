@@ -55,64 +55,370 @@ function getVdTier(vd) {
 }
 
 const AMEACAS = [
+    //Assassino
     {
-        id: "lobisomem",
-        nome: "Lobisomem",
-        vd: 240,
-        categoria: "desafio",
-        elemento: "transformacao",
-        elementosComplementares: ["poder"],
-        tipo: "Aberração",
+        id: "assassino",
+        nome: "Assassino",
+        vd: 80,
+        categoria: "comum",
+        elemento: "nenhum",
+        tipo: "Pessoa",
         tamanho: "Médio",
-        descricao: "Um humano amaldiçoado que se transforma em uma fera bípede sob a lua cheia, caçando em matilhas famintas.",
-        pv: 120,
-        defesa: 18,
-        deslocamento: "9m (correndo 18m)",
-        imunidades: "Medo",
-        resistencias: "Frio e impacto (metade do dano)",
-        vulnerabilidades: "Prata (dano dobrado)",
-        testesResistencia: { fortitude: 7, reflexos: 4, vontade: 3 },
-        sentidos: { iniciativa: 5, percepcao: 6, outros: "Faro (18m), Visão no Escuro (18m)" },
-        presencaCaotica: { dt: 14, danoMental: "1d6", nexIgnorar: 15 },
+        descricao: "O assassino é um matador habilidoso e furtivo, que surge quando as ameaças do universo precisam eliminar alguém de forma discreta e eficiente.",
+        pv: 90,
+        defesa: 9,
+        deslocamento: "9m - 6q",
+        resistencias: "Balístico, Corte e Impacto 1",
+        testesResistencia: { fortitude: 4, reflexos: 5, vontade: -1 },
+        sentidos: { iniciativa: 5, percepcao: 1},
         pericias: [
-            { nome: "Furtividade", bonus: 6 },
-            { nome: "Intimidação", bonus: 5 }
+            {nome: "Furtividade", bonus:9},
+            {nome: "Enganação", bonus:7},
+            {nome: "Prestidigitação", bonus:9}
         ],
         atributos: {
-            forca: 4,
-            destreza: 3,
-            constituicao: 5,
-            poder: 1,
-            inteligencia: 1,
-            sabedoria: 2,
+            forca: 2,
+            destreza: 4,
+            constituicao: 1,
+            poder: 2,
+            inteligencia: 0,
+            sabedoria: 0,
+            carisma: 2
+        },
+        acoes: [
+            {
+                nome: "PADRÃO - Faca X2",
+                bonus: 9,
+                dano: "1d4+10",
+                descricao: "Dano de Corte."
+            },{
+                nome: "PADRÃO - Pistola X2",
+                bonus: 9,
+                dano: "1d12+10",
+                descricao: "Distância Curta, dano Balístico."
+            },
+            {
+                nome: "REAÇÃO LIVRE - Ataque Furtivo",
+                dano: "4d6",
+                descricao: "Uma vez por cena, caso o Assassino acerte um personagem com vantagem em seu teste de ataque, ele pode adicionar +4d6 na rolagem de dano neste ataque."
+            },
+            ,
+            {
+                nome: "REAÇÃO LIVRE - Mão na Boca",
+                bonus: 9,
+                descricao: "Quando faz um ataque corpo a corpo furtivo contra um ser desprevenido, o assassino pode fazer um teste de agarrar (+9). Se agarrar o ser, o mesmo não vai poder falar enquanto estiver agarrado."
+            },
+            {   nome:"MOVIMENTO - Assassinar",
+                dano: "8d6",
+                descricao: "O Assassino analisa um ser em alcance Curto. Até o fim de seu próximo turno, seu primeiro Ataque Furtivo que causar dano a ele tem seus dados duplicados."
+            }
+        ]
+    },
+    //Bandido
+    {
+        id: "bandido",
+        nome: "Bandido",
+        vd: 10,
+        categoria: "lacaio",
+        elemento: "nenhum",
+        tipo: "Pessoa",
+        tamanho: "Médio",
+        descricao: "Um criminoso de rua, beco ou membro de gangue, são mais fortes do que pessoas comuns e podem causar um certo estrago.",
+        pv: 10,
+        defesa: 5,
+        deslocamento: "9m - 6q",
+        resistencias: "Balístico, Corte e Impacto 1",
+        testesResistencia: { fortitude: 0, reflexos: 3, vontade: -4 },
+        sentidos: { iniciativa: 2, percepcao: 0},
+        pericias: [
+            {nome: "Prestidigitação", bonus:3}
+        ],
+        atributos: {
+            forca: 1,
+            destreza: 2,
+            constituicao: 1,
+            poder: 0,
+            inteligencia: 0,
+            sabedoria: 0,
+            carisma: -1
+        },
+        acoes: [
+            {
+                nome: "PADRÃO - Pistola",
+                bonus: 4,
+                dano: "1d10",
+                descricao: "Distância Curta, dano Balístico."
+            },
+            {
+                nome: "PADRÃO - Faca",
+                bonus: 4,
+                dano: "1d6+2",
+                descricao: "Dano de Perfuração."
+            }
+            ,
+            {
+                nome: "REAÇÃO LIVRE - Ataque Furtivo",
+                dano: "1d6",
+                descricao: "Uma vez por cena, caso o Bandido acerte um personagem com vantagem em seu teste de ataque, ele pode gastar 1 PP para adicionar +1d6 na rolagem de dano neste ataque."
+            }
+        ]
+    },
+    //Bêbado Local
+    {
+        id: "bebado",
+        nome: "Bebado Local",
+        vd: 5,
+        categoria: "lacaio",
+        elemento: "nenhum",
+        tipo: "Pessoa",
+        tamanho: "Médio",
+        descricao: "Simpático, falante e sempre cheio de histórias, o bêbado local é aquele sujeito conhecido por todos da vizinhança. ",
+        pv: 5,
+        defesa: 4,
+        deslocamento: "6m - 4q",
+        resistencias: "Químico 1",
+        testesResistencia: { fortitude: 2, reflexos: 0, vontade: -4 },
+        sentidos: { iniciativa: 0, percepcao: 5},
+        pericias: [
+            {nome: "Diplomacia", bonus:3}
+        ],
+        atributos: {
+            forca: 0,
+            destreza: 0,
+            constituicao: 1,
+            poder: 0,
+            inteligencia: 0,
+            sabedoria: 0,
             carisma: 1
         },
         acoes: [
             {
-                nome: "Garras",
-                bonus: 8,
-                dano: "2d8+4",
-                descricao: "Duas garradas rápidas em um mesmo alvo."
-            },
-            {
-                nome: "Mordida",
-                bonus: 6,
-                dano: "1d10+4",
-                descricao: "Se acertar, o alvo deve resistir ou ser infectado pela maldição."
-            },
-            {
-                nome: "Investida Selvagem",
-                descricao: "No início do turno, pode se mover até 9m adicionais em linha reta sem provocar ataques de oportunidade."
+                nome: "PADRÃO - Soco",
+                bonus: 0,
+                dano: "1d3",
+                descricao: "Dano de Impacto"
             }
         ],
         habilidades: [
             {
-                nome: "Regeneração",
-                descricao: "A criatura recupera 10 PV no início de seu turno, a menos que tenha sofrido dano de prata ou fogo no turno anterior."
+                nome:"CAUSOS E HISTÓRIAS",
+                descricao: "O bêbado local conhece muitas histórias, passadas e presentes, de sua região. Um personagem recebe +2 em testes de Investigação para interrogar um bêbado local, desde que a DT da informação seja 10 ou menos."
             },
             {
-                nome: "Faro Aguçado",
-                descricao: "Vantagem em testes de Percepção baseados em olfato."
+                nome:"ESPIÃO INVOLUNTÁRIO",
+                descricao: "O bêbado local pode ser empregado como um espião por um NPC interessado em informações locais. Sempre um personagem interage com um bêbado local, deve fazer um teste de Intuição ou Vontade (DT 8). Se falhar, revela inadvertidamente alguma informação relevante; cada informação revelada fornece um bônus de +2 que o mestre pode gastar ao longo da missão para aumentar a DT de um teste relacionado à investigação contra os personagens."
+            },
+            {
+                nome:"INVISIBILIDADE SOCIAL",
+                descricao: "É fácil não perceber o bêbado local. Talvez ele se esforce para passar despercebido, ou talvez ignorar sua presença seja fácil para pessoas socialmente privilegiadas. Se o bêbado não estiver fazendo nenhuma ação chamativa, outras pessoas precisam passar em um teste de Percepção (DT 8) para notar sua presença. Se falharem, o bêbado local é considerado invisível."
+            }
+        ]
+    },
+    //Cão de Guarda
+    {
+        id: "cao",
+        nome: "Cão de Guarda",
+        vd: 10,
+        categoria: "lacaio",
+        elemento: "nenhum",
+        tipo: "Animal",
+        tamanho: "Médio",
+        descricao: "Cães treinados para guarda podem causar problemas para um grupo de agentes que precisa ser furtivo. Estas estatísticas podem ser usadas também para representar cães policiais. ",
+        pv: 6,
+        defesa: 5,
+        deslocamento: "12m - 8q",
+        testesResistencia: { fortitude: 0, reflexos: 3, vontade: 4 },
+        sentidos: { iniciativa: 2, percepcao: 2, outros: "Faro, Visão na Penumbra"},
+        atributos: {forca: 1,
+            destreza: 2,
+            constituicao: 1,
+            poder: 0,
+            inteligencia: -1,
+            sabedoria: 0,
+            carisma: 0
+        },
+        acoes: [
+            {
+                nome: "PADRÃO - Mordida",
+                bonus: 4,
+                dano: "1d6+2",
+                descricao: "Dano de Corte"
+            },
+            {
+                nome: "LIVRE - Derrubar",
+                bonus: 4,
+                descricao: "Se o cão de guarda acertar um ataque de mordida, pode fazer a manobra derrubar (+4)."
+            }
+        ]
+    },
+    //Capataz
+    {
+        id: "capataz",
+        nome: "Capataz",
+        vd: 20,
+        categoria: "lacaio",
+        elemento: "nenhum",
+        tipo: "Pessoa",
+        tamanho: "Médio",
+        descricao: "São os bandidos mais treinados e capazes de atos violentos ainda piores, sendo geralmente líderes de pequenas gangues.",
+        pv: 20,
+        defesa: 9,
+        deslocamento: "9m - 6q",
+        resistencias: "Balístico, Corte e Impacto 2",
+        testesResistencia: { fortitude: 4, reflexos: 5, vontade: -1 },
+        sentidos: { iniciativa: 5, percepcao: 1},
+        pericias: [
+            {nome: "Furtividade", bonus:5},
+            {nome: "Intimidação", bonus:2},
+            {nome: "Prestidigitação", bonus:5}
+        ],
+        atributos: {
+            forca: 2,
+            destreza: 2,
+            constituicao: 1,
+            poder: 0,
+            inteligencia: -1,
+            sabedoria: -1,
+            carisma: 0
+        },
+        acoes: [
+            {
+                nome: "PADRÃO - Revólver",
+                bonus: 5,
+                dano: "1d12+2",
+                descricao: "Distância Curta, dano Balístico."
+            },
+            {
+                nome: "PADRÃO - Soco Inglês X2",
+                bonus: 4,
+                dano: "1d6+5",
+                descricao: "Dano de Impacto."
+            },
+            {
+                nome: "PADRÃO - Fuzil de Assalto",
+                bonus: 5,
+                dano: "2d8+2",
+                descricao: "Distância Média, dano Balístico."
+            },
+            {
+                nome: "REAÇÃO LIVRE - Ataque Furtivo",
+                dano: "2d6",
+                descricao: "Uma vez por cena, caso o Bandido acerte um personagem com vantagem em seu teste de ataque, ele pode adicionar +2d6 na rolagem de dano neste ataque."
+            }
+        ]
+    },
+    //Chefe de Polícia
+    {
+        id: "chefedepolicia",
+        nome: "Chefe de Polícia",
+        vd: 100,
+        categoria: "comum",
+        elemento: "nenhum",
+        tipo: "Pessoa",
+        tamanho: "Médio",
+        descricao: "Um delegado ou coronel, que já passou por situações difíceis e não se intimida facilmente.",
+        pv: 105,
+        defesa: 14,
+        deslocamento: "9m - 6q",
+        testesResistencia: { fortitude: 5, reflexos: 6, vontade: 3 },
+        sentidos: { iniciativa: 6, percepcao: 3},
+        pericias: [
+            {nome: "Intimidação", bonus:7},
+            {nome: "Tática", bonus:7}
+        ],
+        atributos: {
+            forca: 4,
+            destreza: 4,
+            constituicao: 2,
+            poder: 0,
+            inteligencia: 3,
+            sabedoria: 0,
+            carisma: 0
+        },
+        acoes: [
+            {
+                nome: "PADRÃO - Bastão X2",
+                bonus: 9,
+                dano: "2d8+8",
+                descricao: "Dano de Impacto"
+            },
+            {
+                nome: "PADRÃO - Espingarda X2",
+                bonus: 7,
+                dano: "4d6+10",
+                descricao: "Distância Curta, dano Balístico"
+            },
+            {
+                nome: "REAÇÃO - Teimoso",
+                descricao: "Duas vezes por cena, o Chefe de Polícia pode usar uma reação para ignorar um efeito que exija teste de resistência ou reduzir um dano recém sofrido a metade"
+            }
+        ],
+        habilidades: [
+            {
+                nome:"FORTIFICAÇÃO",
+                descricao: "Graças ao seu equipamento, o policial de elite tem 50% de chance de ignorar o dano adicional de um acerto crítico ou ataque furtivo." 
+            }
+        ]
+    },
+    //Comandante Mercenário
+    {
+        id: "comandante mercenario",
+        nome: "Comandante Mercenário",
+        vd: 100,
+        categoria: "desafio",
+        elemento: "nenhum",
+        tipo: "Pessoa",
+        tamanho: "Médio",
+        descricao: "Uma pessoa endurecida por anos de conflitos. Um comandante mercenário é tanto um oficial competente, capaz de liderar seus subordinados, quanto um combatente perigoso por si só.",
+        pv: 200,
+        defesa: 14,
+        deslocamento: "12m - 8q",
+        resistencias: "Físico e Ambiental 5",
+        testesResistencia: { fortitude: 4, reflexos: 7, vontade: 2 },
+        sentidos: { iniciativa: 6, percepcao: 2},
+        pericias: [
+            {nome: "Intimidação", bonus:5},
+            {nome: "Tática", bonus:6}
+        ],
+        atributos: {
+            forca: 3,
+            destreza: 4,
+            constituicao: 3,
+            poder: 2,
+            inteligencia: 2,
+            sabedoria: 1,
+            carisma: 0
+        },
+        acoes: [
+            {
+                nome: "PADRÃO - Machete X2",
+                bonus: 10,
+                dano: "2d10+10",
+                descricao: "Dano de Corte."
+            },
+            {
+                nome: "PADRÃO - Metralhadora X2",
+                bonus: 10,
+                dano: "2d10+10",
+                descricao: "Distância Média, dano Balístico."
+            },
+            {
+                nome: "MOVIMENTO - Ordens",
+                descricao: "O chefe mercenário grita ordens para seus aliados em alcance médio. Enquanto ele estiver em pé, todos eles recebem vantagem em testes de perícia e causam mais um dado de dano do mesmo tipo até o fim da cena."
+            },
+            {
+                nome: "COMPLETA - Ataque em Movimento",
+                descricao: "O chefe mercenário pode percorrer seu deslocamento e atacar em qualquer ponto durante o movimento. Ele pode fazer seus dois ataques corpo a corpo ou à distância."
+            },
+            {
+                nome: "UMA AÇÃO INJUSTA",
+                descricao: "Uma vez por rodada, o comandante mercenário pode atacar com sua machete ou metralhadora."
+            }
+        ],
+        habilidades: [
+            {
+                nome: "SADISMO",
+                descricao: "Se causar dano em um inimigo, o comandante mercenário recebe vantagem em testes de ataque e, se acertar um ataque, causa mais um dado de dano do mesmo."
             }
         ]
     },
@@ -238,6 +544,263 @@ const AMEACAS = [
             {
                 nome:"FANTASMA",
                 descricao:"O Espectro é incorpóreo, portanto, consegue atravessar entre objetos sólidos, mas não pode os manipular e só pode ser afetado por itens elementais, poderes ou outras ameaças incorpóreas. Porém, caso o Espectro entre em contato com agua benta, ele deixa de ser incorpóreo até o fim da próxima rodada. "
+            }
+        ]
+    },
+    //Fazendeiro Isolado
+    {
+        id: "fazendeiro",
+        nome: "Fazendeiro Isolado",
+        vd: 10,
+        categoria: "lacaio",
+        elemento: "nenhum",
+        tipo: "Pessoa",
+        tamanho: "Médio",
+        descricao: "A vida em uma fazenda não é fácil. Muitas vezes distantes de outras famílias ou da cidade mais próxima, as pessoas do campo aprendem a resolver as coisas com as próprias mãos. Alguns se tornam naturalmente desconfiados de estranhos e desconhecidos, pois sabem que nem sempre podem contar com ajuda nas redondezas. Acostumados a contar apenas consigo e com sua família, se tornam estranhos e pouco receptivos.",
+        pv: 16,
+        defesa: 6,
+        deslocamento: "9m - 6q",
+        testesResistencia: { fortitude: 3, reflexos: 3, vontade: 0 },
+        sentidos: { iniciativa: 3, percepcao: 1},
+        pericias: [
+            {nome: "Manufatura (fazendeiro)", bonus:2}
+        ],
+        atributos: {forca: 1,
+            destreza: 1,
+            constituicao: 0,
+            poder: 0,
+            inteligencia: 0,
+            sabedoria: 1,
+            carisma: 0
+        },
+        acoes: [
+            {
+                nome: "PADRÃO - Pancada",
+                bonus: 5,
+                dano: "1d3+1",
+                descricao: "Dano de Impacto"
+            },
+            {
+                nome: "PADRÃO - Peixeira",
+                bonus: 5,
+                dano: "1d8+1",
+                descricao: "Dano de Corte"
+            },
+            {
+                nome: "PADRÃO - Espingarda",
+                bonus: 5,
+                dano: "4d6",
+                descricao: "Distância Curta, dano Balístico"
+            },
+            {
+                nome: "MOVIMENTO - Atiçar os Cães",
+                dano: "1d8",
+                descricao: "O fazendeiro comanda seus cães de guarda para avançar sobre um alvo em alcance curto. Os animais investem com ferocidade, cercando o alvo e esperando a melhor oportunidade para atacar. O próximo ataque que o fazendeiro acertar causa +1d8 pontos de dano de Perfuração e deixa o alvo caído (Luta DT 8 evita a condição)."
+            }
+        ],
+        habilidades: [
+            {
+                nome:"DE SOL A SOL",
+                descricao: "O fazendeiro isolado não fica inconsciente por ter seus PV reduzidos a 0."
+            },
+            {
+                nome:"HISTÓRIAS DE PESCADOR",
+                descricao: "Sendo uma fonte infinita de causos e histórias da região onde vive, o fazendeiro pode ajudar os personagens, se estiver disposto. Se os personagens compartilharem sua investigação com o fazendeiro, ele pode, a critério do mestre, fazer um teste de revisar o caso usando Manufatura (fazendeiro). Se passar, fornece uma pista para o caso usando sua vivência no mato ou histórias de antepassados para explicá-la."
+            },
+            {
+                nome:"RESISILIÊNCIA DO CAMPO",
+                descricao: "Acostumado a resolver os perrengues do dia a dia com as próprias mãos e com a paciência exigida pela natureza, o fazendeiro pode usar Manufatura (fazendeiro) no lugar de perícias baseadas em Força ou Sabedoria."
+            }
+        ]
+    },
+    //Minotauro
+    {
+        id: "minotauro",
+        nome: "Minotauro",
+        vd: 280,
+        categoria: "desafio",
+        elemento: "realidade",
+        elementosComplementares: "espaco",
+        tipo: "Anomalia",
+        tamanho: "Grande",
+        presencaCaotica: {dt: 14, danoMental: "9d6", nexIgnorar: 80},
+        descricao: "A forma de um animal enorme, furioso e bípede com mais de três metros, infectado com pústulas nojentas de Realidade e veias pulsantes por um lado inteiro de seu corpo, o Minotauro é originada das lendas da mitologia grega sobre um monstro terrível que habita labirintos.",
+        pv: 750,
+        defesa: 19,
+        deslocamento: "12m - 8q",
+        resistencias: "Físico 10 e Realidade 20",
+        vulnerabilidades: "Espaço",
+        testesResistencia: { fortitude: 13, reflexos: 9, vontade: 5 },
+        sentidos: { iniciativa: 5, percepcao: 2},
+        pericias: [
+            {nome: "Atletismo", bonus:12}
+        ],
+        atributos: {forca: 6,
+            destreza: 4,
+            constituicao: 6,
+            poder: 3,
+            inteligencia: -2,
+            sabedoria: 0,
+            carisma: 0
+        },
+        acoes: [
+            {
+                nome: "PADRÃO - Chifres X3",
+                bonus: 19,
+                dano: "4d6+25",
+                descricao: "Dano Perfurante"
+            },
+            {
+                nome: "PADRÃO - Machado X2",
+                bonus: 19,
+                dano: "4d12+30",
+                descricao: "Dano de Corte"
+            },
+            {
+                nome: "LIVRE - Cravar Chifres",
+                dano: "2d10+10",
+                descricao: "Se fizer uma investida com seus chifres em um alvo e acertar o ataque, o Minotauro crava seus chifres no alvo, que fica agarrado. Enquanto mantem um ser agarrado dessa forma, o Minotauro não pode atacar com seus chifres. Porém, no final de cada turno da vítima na qual ela ainda esteja agarrada pelos chifres, elas 2d10 + 10 pontos de dano de Realidade."
+            },
+            {
+                nome: "MOVIMENTO - Amaldiçoar Machado",
+                bonus: 21,
+                dano: "3d6",
+                descricao: "O Minotauro cospe parte de seu sangue em seu machado, adicionando +3d6 de dano de Realidade e +2 em testes de ataque até o fim da cena."
+            },
+            {
+                nome: "MOVIMENTO - Poça de Sangue",
+                descricao: "Uma vez por cena, o Minotauro cria uma poça de sangue misturada com fragmentos de Gemma em algum espaço adjacente e então, atravessa por ele. Ele então, é teletransportado para algum ponto em alcance Longo."
+            },
+            {
+                nome: "PADRÃO - ",
+                bonus: 5,
+                dano: "",
+                descricao: ""
+            },
+            {
+                nome: "PADRÃO - ",
+                bonus: 5,
+                dano: "",
+                descricao: ""
+            }
+        ],
+        habilidades: [
+            {
+                nome:"ESCAPAR DA DESTRUIÇÃO",
+                descricao: "A resistência do Enganchado faz com que ele aguente mais golpes do que qualquer outra pessoa. Três vezes por dia, ele pode escolher elevar o resultado de um teste de resistência em um nível."
+            },
+            {
+                nome:"SANGUE FORTALECEDOR",
+                descricao: "O Minotauro está sempre se regenerando. Ele possui Cura Acelerada 15"
+            }
+        ]
+    },
+    //Policial
+    {
+        id: "policial",
+        nome: "Policial",
+        vd: 20,
+        categoria: "comum",
+        elemento: "nenhum",
+        tipo: "Pessoa",
+        tamanho: "Médio",
+        descricao: "O policial padrão, encontrado patrulhando as ruas e praças da maioria das cidades. Provavelmente nunca teve um encontro com o paranormal, e vai considerar qualquer menção a monstros e magias uma brincadeira de mau gosto – ou mesmo uma desculpa para esconder algum crime. Esta ficha também pode ser usada para vigias, seguranças corporativos e pessoas com algum treinamento com armas em geral.",
+        pv: 20,
+        defesa: 7,
+        deslocamento: "9m - 6q",
+        testesResistencia: { fortitude: 2, reflexos: 3, vontade: 0 },
+        sentidos: { iniciativa: 5, percepcao: 1},
+        pericias: [
+            {nome: "Intimidação", bonus:2},
+            {nome: "Tática", bonus:2}
+        ],
+        atributos: {
+            forca: 1,
+            destreza: 2,
+            constituicao: 1,
+            poder: 0,
+            inteligencia: 0,
+            sabedoria: 0,
+            carisma: 0
+        },
+        acoes: [
+            {
+                nome: "PADRÃO - Bastão",
+                bonus: 5,
+                dano: "1d6+2",
+                descricao: "Dano de Impacto"
+            },
+            {
+                nome: "PADRÃO - Pistola",
+                bonus: 5,
+                dano: "1d12+2",
+                descricao: "Distância Curta, dano Balístico"
+            }
+        ],
+        habilidades: [
+            {
+                nome:"AUTORIDADE SUPERIOR",
+                descricao: "Os policiais tendem a se impor em meio a situações perigosas. Uma vez por cena, o policial pode passar em um teste de Vontade ou Intimidação a escolha dele."
+            }
+        ]
+    },
+    //Policial de Elite
+    {
+        id: "policialelite",
+        nome: "Policial de Elite",
+        vd: 60,
+        categoria: "comum",
+        elemento: "nenhum",
+        tipo: "Pessoa",
+        tamanho: "Médio",
+        descricao: "Treinados e equipados para enfrentar situações extremas, os policiais de uma tropa de elite provavelmente serão os primeiros a aparecer quando uma investigação discreta se transformar em um confronto armado.",
+        pv: 45,
+        defesa: 12,
+        deslocamento: "9m - 6q",
+        testesResistencia: { fortitude: 4, reflexos: 4, vontade: 2 },
+        sentidos: { iniciativa: 5, percepcao: 1},
+        pericias: [
+            {nome: "Intimidação", bonus:5},
+            {nome: "Tática", bonus:5}
+        ],
+        atributos: {
+            forca: 3,
+            destreza: 3,
+            constituicao: 1,
+            poder: 0,
+            inteligencia: 2,
+            sabedoria: 0,
+            carisma: 0
+        },
+        acoes: [
+            {
+                nome: "PADRÃO - Bastão X2",
+                bonus: 7,
+                dano: "2d8+2",
+                descricao: "Dano de Impacto"
+            },
+            {
+                nome: "PADRÃO - Fuzil X2",
+                bonus: 7,
+                dano: "2d10+2",
+                descricao: "Distância Média, dano Balístico"
+            },
+            {
+                nome: "PADRÃO - Empurrar e Atirar",
+                bonus: 7,
+                dano: "4d10+2",
+                descricao: "O policial de elite empurra um personagem adjacente para 3m longe de si (Luta DT 12 evita) e em seguida atira com seu fuzil de assalto a curta distância. Se tiver conseguido empurrar o personagem, o policial de elite recebe vantagem no teste de ataque e, se acertar, +2d10 na rolagem de dano."
+            },
+            {
+                nome: "PADRÃO - Lança-Granadas",
+                dano: "8d6",
+                descricao: "Uma vez por cena, o policial de elite dispara uma granada explosiva em alcance médio. Cada ser a 6m do ponto de impacto sofre 8d6 pontos de dano de impacto (Reflexos DT 8 reduz à metade)."
+            }
+        ],
+        habilidades: [
+            {
+                nome:"FORTIFICAÇÃO",
+                descricao: "Graças ao seu equipamento, o policial de elite tem 50% de chance de ignorar o dano adicional de um acerto crítico ou ataque furtivo." 
             }
         ]
     },
@@ -381,151 +944,129 @@ const AMEACAS = [
             }
         ]
     },
+    //Soldade de aluguel
     {
-        id: "sombra-rastreira",
-        nome: "Sombra Rastreira",
-        vd: 20,
+        id: "soldado de aluguel",
+        nome: "Soldado de Aluguel",
+        vd: 60,
         categoria: "lacaio",
-        elemento: "alma",
-        tipo: "Espírito",
-        tamanho: "Pequena",
-        descricao: "Um resquício de alma perdida que se arrasta pelas sombras, atacando em números.",
-        pv: 15,
-        defesa: 12,
-        deslocamento: "9m (flutuando)",
-        imunidades: "Veneno, doença",
-        vulnerabilidades: "Luz radiante",
-        testesResistencia: { fortitude: 0, reflexos: 3 },
-        sentidos: { iniciativa: 3, percepcao: 1 },
-        atributos: {
-            forca: 0,
-            destreza: 2,
-            constituicao: 0,
-            poder: 1,
-            inteligencia: -1,
-            sabedoria: 0,
-            carisma: -1
-        },
-        acoes: [
-            {
-                nome: "Toque Gélido",
-                bonus: 3,
-                dano: "1d6",
-                descricao: "Um toque que rouba o calor do corpo."
-            },
-            {
-                nome: "Dissolver-se",
-                descricao: "Pode se tornar incorpórea até o início do próximo turno, ignorando dano físico nesse período."
-            }
-        ],
-        habilidades: [
-            {
-                nome: "Incorpórea",
-                descricao: "Pode atravessar paredes finas e não é afetada por armadilhas físicas."
-            }
-        ]
-    },
-    {
-        id: "zumbi-errante",
-        nome: "Zumbi Errante",
-        vd: 140,
-        categoria: "comum",
-        elemento: "transformacao",
-        tipo: "Morto-vivo",
+        elemento: "nenhum",
+        tipo: "Pessoa",
         tamanho: "Médio",
-        descricao: "Um corpo reanimado por uma força paranormal, lento mas incansável.",
+        descricao: "Um combatente profissional, que trabalha para quem pagar mais. ",
         pv: 45,
-        defesa: 13,
-        deslocamento: "6m",
-        imunidades: "Veneno, doença, efeitos que exijam respiração",
-        vulnerabilidades: "Fogo",
-        testesResistencia: { fortitude: 4, reflexos: -1, vontade: 0 },
-        sentidos: { percepcao: 1 },
+        defesa: 11,
+        deslocamento: "9m - 6q",
+        resistencias: "Balístico, Corte e Impacto 5",
+        testesResistencia: { fortitude: 4, reflexos: 5, vontade: 0 },
+        sentidos: { iniciativa: 5, percepcao: 2},
         pericias: [
-            { nome: "Atletismo", bonus: 4 }
+            {nome: "Furtividade", bonus:6},
+            {nome: "Intimidação", bonus:4},
+            {nome: "Prestidigitação", bonus:6}
         ],
         atributos: {
             forca: 3,
-            destreza: -1,
-            constituicao: 3,
-            poder: 0,
-            inteligencia: -2,
-            sabedoria: -1,
-            carisma: -2
+            destreza: 3,
+            constituicao: 2,
+            poder: 1,
+            inteligencia: 0,
+            sabedoria: 0,
+            carisma: 0
         },
         acoes: [
             {
-                nome: "Golpe",
-                bonus: 5,
-                dano: "1d8+2",
-                descricao: "Um golpe pesado e descoordenado."
-            }
-        ],
-        habilidades: [
+                nome: "PADRÃO - Machete",
+                bonus: 6,
+                dano: "2d6+5",
+                descricao: "Dano de Corte."
+            },
             {
-                nome: "Não Morto",
-                descricao: "Imune a veneno e a efeitos que exijam respiração."
+                nome: "PADRÃO - Fuzil de Assalto",
+                bonus: 6,
+                dano: "2d8+5",
+                descricao: "Distância Média, dano Balístico."
+            },
+            {
+                nome: "COMPLETA - Disparada em Investida",
+                bonus: 6,
+                dano: "2d8+5",
+                descricao: "O soldado de aluguel pode se mover em algum lugar dentro de seu deslocamento e realizar dois ataques em um ser esteja adjacente no lugar que chegou. Se acertar ambos os ataques, faz com que o alvo fique fraco até o final de seu próximo turno (Fortitude DT 10 evita)."
             }
         ]
     },
+    //Template
     {
-        id: "arauto-do-fim",
-        nome: "Arauto do Fim",
-        vd: 380,
-        categoria: "calamidade",
-        elemento: "realidade",
-        elementosComplementares: ["poder", "mente"],
-        tipo: "Entidade",
-        tamanho: "Grande",
-        descricao: "Uma fenda na realidade tomou forma quase humana. Sua simples presença distorce o espaço ao redor.",
-        pv: 300,
-        defesa: 22,
-        deslocamento: "9m (voando, 18m)",
-        imunidades: "Medo, controle mental",
-        resistencias: "Todos os danos físicos (metade)",
-        testesResistencia: { fortitude: 10, reflexos: 7, vontade: 9 },
-        sentidos: { iniciativa: 6, percepcao: 8, outros: "Percepção às Cegas (27m), Visão Verdadeira" },
-        presencaCaotica: { dt: 20, danoMental: "2d6", nexIgnorar: 40 },
+        id: "",
+        nome: "",
+        vd: 20,
+        categoria: "",
+        elemento: "",
+        tipo: "",
+        tamanho: "",
+        descricao: "",
+        pv: 20,
+        defesa: 9,
+        deslocamento: "9m - 6q",
+        resistencias: "",
+        testesResistencia: { fortitude: 4, reflexos: 5, vontade: -1 },
+        sentidos: { iniciativa: 5, percepcao: 1},
         pericias: [
-            { nome: "Intimidação", bonus: 10 },
-            { nome: "Ocultismo", bonus: 8 }
+            {nome: "Furtividade", bonus:5},
+            {nome: "Intimidação", bonus:2},
+            {nome: "Prestidigitação", bonus:5}
         ],
-        atributos: {
-            forca: 5,
-            destreza: 3,
-            constituicao: 6,
-            poder: 7,
-            inteligencia: 4,
-            sabedoria: 3,
-            carisma: 2
+        atributos: {forca: 2,
+            destreza: 2,
+            constituicao: 1,
+            poder: 0,
+            inteligencia: -1,
+            sabedoria: -1,
+            carisma: 0
         },
         acoes: [
             {
-                nome: "Ruptura",
-                bonus: 12,
-                dano: "3d10+7",
-                descricao: "Um estilhaço de realidade quebrada corta o alvo."
+                nome: "PADRÃO - ",
+                bonus: 5,
+                dano: "",
+                descricao: ""
             },
             {
-                nome: "Onda de Vazio",
-                bonus: 10,
-                dano: "4d8",
-                descricao: "Atinge todos em uma área; alvos devem resistir ou ficarem Enjoados."
+                nome: "PADRÃO - ",
+                bonus: 5,
+                dano: "",
+                descricao: ""
             },
             {
-                nome: "Fenda Instável",
-                descricao: "Abre uma fenda temporária que impede teleporte e movimento dimensional em um raio de 18m até o início do próximo turno."
+                nome: "PADRÃO - ",
+                bonus: 5,
+                dano: "",
+                descricao: ""
+            },
+            {
+                nome: "PADRÃO - ",
+                bonus: 5,
+                dano: "",
+                descricao: ""
             }
         ],
         habilidades: [
             {
-                nome: "Presença Devastadora",
-                descricao: "Criaturas a até 9m devem ser bem-sucedidas em um teste de Vontade no início de seu turno ou ficam Apavoradas por 1 rodada."
+                nome:"",
+                descricao: ""
             },
             {
-                nome: "Regeneração Dimensional",
-                descricao: "Recupera 20 PV no início de seu turno, a menos que tenha sofrido dano do elemento Realidade."
-            }
+                nome:"",
+                descricao: ""
+            },
+            {
+                nome:"",
+                descricao: ""
+            },
+            {
+                nome:"",
+                descricao: ""
+            },
         ]
-    }
+    },
 ];
